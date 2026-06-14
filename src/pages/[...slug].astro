@@ -1,0 +1,88 @@
+---
+import path from "node:path";
+import { getCollection, render } from "astro:content";
+import { mdxComponents } from "@/components/mdx/index";
+import DocLayout from "@/layouts/DocLayout.astro";
+import { isContentPage } from "@/lib/docs";
+import { buildGitDateMap } from "@/lib/gitDates";
+import { buildBreadcrumbMap, buildNavTree, buildPageList } from "@/lib/nav";
+import type { Crumb, NavNode, NavPage } from "@/lib/nav";
+import { calcReadingTime } from "@/lib/readingTime";
+import config from "@root/folio.config";
+
+export async function getStaticPaths() {
+  const allDocs = await getCollection("docs");
+  const pages = allDocs.filter(isContentPage);
+  const gitDates = buildGitDateMap(config.contentDir);
+  const nav = buildNavTree(allDocs);
+  const breadcrumbMap = buildBreadcrumbMap(nav);
+  const pageList = buildPageList(nav);
+  const contentDirAbs = path.resolve(config.contentDir);
+  return pages.map((entry) => {
+    const currentHref = entry.id === "index" ? "/" : `/${entry.id}`;
+    const pageIndex = pageList.findIndex((p) => p.href === currentHref);
+    const prev = pageIndex > 0 ? pageList[pageIndex - 1] : null;
+    const next =
+      pageIndex < pageList.length - 1 ? pageList[pageIndex + 1] : null;
+    const originalPath = entry.filePath
+      ? path.relative(contentDirAbs, entry.filePath)
+      : undefined;
+    const editUrl =
+      config.editLink?.base && originalPath
+        ? `${config.editLink.base.replace(/\/$/, "")}/${originalPath}`
+        : undefined;
+    return {
+      params: { slug: entry.id === "index" ? undefined : entry.id },
+      props: {
+        entry,
+        nav,
+        currentHref,
+        breadcrumbs: breadcrumbMap.get(currentHref) ?? [
+          { label: entry.data.title },
+        ],
+        lastEdited: gitDates.get(entry.id)?.modified ?? null,
+        datePublished: gitDates.get(entry.id)?.created ?? null,
+        readingTime: calcReadingTime(entry.body ?? ""),
+        prev,
+        next,
+        editUrl,
+      },
+    };
+  });
+}
+
+const {
+  entry,
+  nav,
+  currentHref,
+  breadcrumbs,
+  lastEdited,
+  datePublished,
+  readingTime,
+  prev,
+  next,
+  editUrl,
+} = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<DocLayout
+  title={entry.data.title}
+  showTitle={entry.data.showTitle}
+  description={entry.data.description}
+  noIndex={entry.data.noIndex}
+  nav={nav}
+  currentHref={currentHref}
+  headings={headings}
+  breadcrumbs={breadcrumbs}
+  lastEdited={lastEdited}
+  datePublished={datePublished}
+  readingTime={readingTime}
+  keywords={entry.data.keywords}
+  author={entry.data.author}
+  editUrl={editUrl}
+  prev={prev}
+  next={next}
+>
+  <Content components={mdxComponents} />
+</DocLayout>

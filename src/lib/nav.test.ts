@@ -1,0 +1,147 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { buildBreadcrumbMap, buildNavTree, buildPageList } from "./nav";
+
+const entry = (id: string, title: string, icon?: string) => ({
+  id,
+  data: { title, icon } as { title: string; icon?: string },
+});
+
+describe("buildNavTree", () => {
+  it("produces a top-level page for a flat entry", () => {
+    const [node] = buildNavTree([entry("about", "About")]);
+    expect(node).toMatchObject({
+      type: "page",
+      title: "About",
+      href: "/about",
+      id: "about",
+    });
+  });
+
+  it("groups nested entries under a section", () => {
+    const [node] = buildNavTree([
+      entry("guide/getting-started", "Getting Started"),
+      entry("guide/configuration", "Configuration"),
+    ]);
+    expect(node).toMatchObject({ type: "section", title: "Guide" });
+    expect(node.type === "section" && node.children).toHaveLength(2);
+    // sorted alphabetically: configuration < getting-started
+    expect(node.type === "section" && node.children[0]).toMatchObject({
+      href: "/guide/configuration",
+    });
+  });
+
+  it("reads title and icon from _section entry and excludes it from children", () => {
+    const [section] = buildNavTree([
+      entry("guide/_section", "Guide", "BookOpen"),
+      entry("guide/getting-started", "Getting Started"),
+      entry("guide/configuration", "Configuration"),
+    ]);
+    expect(section).toMatchObject({
+      type: "section",
+      title: "Guide",
+      icon: "BookOpen",
+    });
+    if (section.type === "section") {
+      expect(section.children).toHaveLength(2);
+      expect(section.children.every((c) => c.id !== "guide/_section")).toBe(
+        true,
+      );
+    }
+  });
+
+  it("falls back to derived title and no icon when _section is absent", () => {
+    const [section] = buildNavTree([entry("guide/setup", "Setup")]);
+    expect(section).toMatchObject({ type: "section", title: "Guide" });
+    if (section.type === "section") expect(section.icon).toBeUndefined();
+  });
+
+  it("sorts index first", () => {
+    const nav = buildNavTree([entry("about", "About"), entry("index", "Home")]);
+    expect(nav[0]).toMatchObject({ href: "/" });
+  });
+
+  it("Title Cases the directory name as section title", () => {
+    const [node] = buildNavTree([entry("quick-start/intro", "Intro")]);
+    expect(node).toMatchObject({ type: "section", title: "Quick Start" });
+  });
+});
+
+describe("buildNavTree warnings", () => {
+  let warned: string[];
+
+  beforeEach(() => {
+    warned = [];
+    vi.spyOn(console, "warn").mockImplementation((msg: string) => {
+      warned.push(msg);
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("warns when a nested page has an icon", () => {
+    buildNavTree([entry("guide/setup", "Setup", "Wrench")]);
+    expect(
+      warned.some((w) => w.includes("guide/setup") && w.includes("icon")),
+    ).toBe(true);
+  });
+
+  it("does not warn when a top-level _section has an icon", () => {
+    buildNavTree([
+      entry("guide/_section", "Guide", "BookOpen"),
+      entry("guide/page", "Page"),
+    ]);
+    expect(warned.some((w) => w.includes("icon"))).toBe(false);
+  });
+
+  it("warns and ignores _section that is not directly inside a top-level folder", () => {
+    buildNavTree([
+      entry("guide/sub/_section", "Sub", "Star"),
+      entry("guide/sub/page", "Page"),
+    ]);
+    expect(warned.some((w) => w.includes("guide/sub/_section"))).toBe(true);
+  });
+
+  it("warns when nesting exceeds 3 levels deep", () => {
+    buildNavTree([entry("a/b/c/page", "Page")]);
+    expect(
+      warned.some((w) => w.includes("a/b/c/page") && w.includes("consider")),
+    ).toBe(true);
+  });
+
+  it("does not warn for exactly 3 levels deep", () => {
+    buildNavTree([entry("a/b/page", "Page")]);
+    expect(warned.some((w) => w.includes("3 levels"))).toBe(false);
+  });
+});
+
+describe("buildBreadcrumbMap", () => {
+  it("maps a top-level page to a single-crumb array with no href", () => {
+    const map = buildBreadcrumbMap(buildNavTree([entry("about", "About")]));
+    expect(map.get("/about")).toEqual([{ label: "About" }]);
+  });
+
+  it("maps a section child to [section, page] breadcrumbs", () => {
+    const map = buildBreadcrumbMap(
+      buildNavTree([entry("guide/setup", "Setup")]),
+    );
+    expect(map.get("/guide/setup")).toEqual([
+      { label: "Guide" },
+      { label: "Setup" },
+    ]);
+  });
+});
+
+describe("buildPageList", () => {
+  it("inlines section children into the flat list", () => {
+    const pages = buildPageList(
+      buildNavTree([
+        entry("guide/getting-started", "Getting Started"),
+        entry("guide/configuration", "Configuration"),
+      ]),
+    );
+    expect(pages).toHaveLength(2);
+    expect(pages[0].href).toBe("/guide/configuration"); // sorted alphabetically
+  });
+});

@@ -1,0 +1,27 @@
+---
+---
+
+<script>
+  async function handleClick(e: MouseEvent) {
+    const btn = (e.target as Element).closest<HTMLButtonElement>(".copy-code-btn");
+    if (!btn || btn.hasAttribute("data-copied")) return;
+
+    await navigator.clipboard.writeText(btn.dataset.code ?? "");
+
+    const sr = btn.querySelector<HTMLElement>(".sr-only")!;
+    btn.setAttribute("data-copied", "");
+    btn.setAttribute("aria-label", "Copied!");
+    sr.textContent = "Copied!";
+
+    setTimeout(() => {
+      btn.removeAttribute("data-copied");
+      btn.setAttribute("aria-label", "Copy code");
+      sr.textContent = "";
+    }, 2000);
+  }
+
+  document.addEventListener("click", handleClick);
+  document.addEventListener("astro:before-swap", () => {
+    document.removeEventListener("click", handleClick);
+  }, { once: true });
+</script>

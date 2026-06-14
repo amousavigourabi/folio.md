@@ -1,0 +1,365 @@
+---
+import "@/styles/global.css";
+import { CookieBanner } from "@/components/CookieBanner";
+import CopyCodeButton from "@/components/CopyCodeButton.astro";
+import { MobileMenuButton } from "@/components/MobileMenuButton";
+import { type IconName, NavIcon, iconNames } from "@/components/NavIcon";
+import { SearchBar } from "@/components/SearchBar";
+import { Sidebar } from "@/components/Sidebar";
+import { TableOfContents } from "@/components/TableOfContents";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import type { Crumb, Heading, NavNode, NavPage } from "@/lib/nav";
+import { articleSchema, breadcrumbSchema, websiteSchema } from "@/lib/schema";
+import config from "@root/folio.config";
+import ClientRouter from "astro/components/ClientRouter.astro";
+import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+
+interface Props {
+  title: string;
+  showTitle?: boolean;
+  description?: string;
+  noIndex?: boolean;
+  nav: NavNode[];
+  currentHref: string;
+  headings?: Heading[];
+  breadcrumbs?: Crumb[];
+  lastEdited?: Date | null;
+  datePublished?: Date | null;
+  readingTime?: number;
+  keywords?: string[];
+  author?: string;
+  editUrl?: string;
+  prev?: NavPage | null;
+  next?: NavPage | null;
+}
+
+const {
+  title,
+  showTitle = true,
+  description,
+  noIndex,
+  nav,
+  currentHref,
+  headings = [],
+  breadcrumbs = [],
+  lastEdited,
+  datePublished,
+  readingTime,
+  keywords,
+  author,
+  editUrl,
+  prev,
+  next,
+} = Astro.props;
+
+const locale = config.seo?.locale;
+const lastEditedStr = lastEdited
+  ? lastEdited.toLocaleDateString(locale ?? "en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : null;
+
+const lightMode = config.light.enabled;
+const darkMode = config.dark.enabled;
+const bgLight = `linear-gradient(to bottom right, ${config.light.gradient.from}, ${config.light.gradient.to})`;
+const bgDark = `linear-gradient(to bottom right, ${config.dark.gradient.from}, ${config.dark.gradient.to})`;
+
+function faviconType(path: string) {
+  if (path.endsWith(".svg")) return "image/svg+xml";
+  if (path.endsWith(".png")) return "image/png";
+  return "image/x-icon";
+}
+
+function resolveFavicon(mode: "light" | "dark") {
+  const custom = config[mode].icons?.favicon;
+  const path = custom ?? `/icon-${mode}.svg`;
+  return { path, type: faviconType(path) };
+}
+
+const { path: lightFavicon, type: lightFaviconType } = resolveFavicon("light");
+const { path: darkFavicon, type: darkFaviconType } = resolveFavicon("dark");
+
+const siteBase = config.siteUrl.replace(/\/$/, "");
+const canonicalUrl = `${siteBase}${currentHref}`;
+const autoOgSlug =
+  currentHref === "/" ? "index" : currentHref.replace(/^\//, "");
+const ogImageUrl = `${siteBase}/og/${autoOgSlug}.png`;
+
+const schemas = [
+  websiteSchema(config),
+  ...(currentHref !== "/" && !noIndex
+    ? [
+        articleSchema({
+          title,
+          description,
+          author,
+          datePublished,
+          lastEdited,
+          url: canonicalUrl,
+          ogImageUrl,
+          siteName: config.name,
+          siteUrl: config.siteUrl,
+        }),
+      ]
+    : []),
+  ...(breadcrumbs.length > 1
+    ? [breadcrumbSchema(breadcrumbs, config.siteUrl)]
+    : []),
+];
+const pageDescription = description ?? config.description;
+const robots = noIndex
+  ? "noindex, nofollow"
+  : (config.seo?.robots ?? "index, follow");
+
+const lastCrumb = breadcrumbs.at(-1);
+const parentCrumbs = breadcrumbs.slice(0, -1);
+const tocHeadings = headings.filter((h) => h.depth === 1 || h.depth === 2);
+
+const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: ${config.light.gradient.from}; --scrim-dark: ${config.dark.gradient.from}; --accent-h: ${config.accentHue ?? 264}`;
+---
+
+<html lang={config.lang} class="overscroll-none" style={htmlStyle}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Primary -->
+    <title>{title} | {config.name}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content={robots} />
+    {author && <meta name="author" content={author} />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="alternate" type="application/atom+xml" title={config.name} href="/feed.xml" />
+    {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
+
+    <!-- Icons -->
+    {lightMode && <link rel="icon" href={lightFavicon} type={lightFaviconType} />}
+    {darkMode && <link rel="icon" href={darkFavicon} type={darkFaviconType} media={lightMode ? "(prefers-color-scheme: dark)" : undefined} />}
+    {config.light.icons?.appleTouchIcon && <link rel="apple-touch-icon" href={config.light.icons.appleTouchIcon} />}
+
+    <!-- Theme colour -->
+    {lightMode && <meta name="theme-color" content={config.light.gradient.from} media="(prefers-color-scheme: light)" />}
+    {darkMode && <meta name="theme-color" content={config.dark.gradient.from} media="(prefers-color-scheme: dark)" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={currentHref !== "/" && !noIndex ? "article" : "website"} />
+    <meta property="og:site_name" content={config.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:locale" content={config.seo?.locale?.replace(/-/g, "_") ?? "en_US"} />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImageUrl && (
+      <>
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content={title} />
+      </>
+    )}
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content={ogImageUrl ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={pageDescription} />
+    {config.seo?.twitterHandle && (
+      <>
+        <meta name="twitter:site" content={`@${config.seo.twitterHandle}`} />
+        <meta name="twitter:creator" content={`@${config.seo.twitterHandle}`} />
+      </>
+    )}
+    {ogImageUrl && (
+      <>
+        <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image:alt" content={title} />
+      </>
+    )}
+    <!-- JSON-LD structured data -->
+    {schemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+    <ClientRouter />
+    {/* Dark-only: bake in the dark class and persist it across view transitions */}
+    {darkMode && !lightMode && (
+      <script is:inline>
+        document.documentElement.classList.add("dark");
+        document.addEventListener("astro:before-swap", (e) => {
+          e.newDocument.documentElement.classList.add("dark");
+        });
+      </script>
+    )}
+    {/* Both modes: respect user preference and persist across view transitions */}
+    {darkMode && lightMode && (
+      <script is:inline>
+        const stored = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (stored === "dark" || (!stored && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+        document.addEventListener("astro:before-swap", (e) => {
+          if (document.documentElement.classList.contains("dark")) {
+            e.newDocument.documentElement.classList.add("dark");
+          }
+        });
+      </script>
+    )}
+  </head>
+  <body class="min-h-screen p-4 sm:p-6 flex flex-col gap-4 antialiased
+               text-neutral-900 dark:text-neutral-100">
+
+    <!--
+      Fixed scrim: sits above content (z-10) but below the navbar (z-20).
+      Opaque at the top (matches the body gradient's start colour), fades to
+      transparent ~160px down so scrolling content dissolves before it reaches
+      the navbar. pointer-events-none so clicks pass through.
+    -->
+    <div id="scrim" aria-hidden="true" transition:persist class="fixed inset-x-0 top-0 h-26 sm:h-30 z-10 pointer-events-none max-sm:hidden"></div>
+
+    <nav aria-label="Site header" transition:persist class="sticky top-0 sm:top-6 z-20 flex items-center justify-between px-2 h-14 max-sm:h-auto max-sm:[background:var(--scrim-start)] max-sm:border-b max-sm:border-black/10 max-sm:dark:border-white/10 max-sm:-mx-4 max-sm:-mt-4 max-sm:px-4 max-sm:py-4">
+      <div class="flex items-center gap-2">
+        <MobileMenuButton
+          nav={nav}
+          name={config.name}
+          lightIcon={config.light.icons?.favicon}
+          darkIcon={config.dark.icons?.favicon}
+          lightMode={lightMode}
+          darkMode={darkMode}
+          client:load
+        />
+        <a
+          href="/"
+          class="hidden lg:flex items-center gap-2 text-2xl font-bold text-neutral-900 dark:text-neutral-100
+                 site-title-hover transition-colors"
+        >
+          {lightMode && config.light.icons?.favicon && <img src={lightFavicon} alt="" aria-hidden="true" class={`h-6 w-6 shrink-0${darkMode ? " dark:hidden" : ""}`} />}
+          {darkMode && config.dark.icons?.favicon && <img src={darkFavicon} alt="" aria-hidden="true" class={`h-6 w-6 shrink-0${lightMode ? " hidden dark:block" : ""}`} />}
+          {config.name}
+        </a>
+      </div>
+      <SearchBar client:load />
+      <div class="flex items-center gap-1">
+        {config.navbar?.links?.map((link) => {
+          const linkIcon = link.icon as IconName | undefined;
+          const icon = linkIcon && iconNames.includes(linkIcon) ? linkIcon : null;
+          return (
+            <a href={link.href} class="icon-btn" title={link.label} aria-label={link.label} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+              {icon ? <NavIcon name={icon} className="w-4 h-4" /> : <span class="text-sm">{link.label}</span>}
+            </a>
+          );
+        })}
+        {darkMode && lightMode
+          ? <ThemeToggle client:idle />
+          : <div aria-hidden="true" class="hidden lg:block w-9" />
+        }
+      </div>
+    </nav>
+
+    <CopyCodeButton />
+    {config.gaId && <CookieBanner gaId={config.gaId} client:only="react" transition:persist />}
+    <div class="flex gap-4">
+
+      <aside aria-label="Sidebar" class="hidden lg:block aside-col" transition:persist>
+        <div class="panel p-4">
+          <Sidebar nav={nav} currentHref={currentHref} client:idle />
+        </div>
+      </aside>
+
+      <main class="panel flex-1 min-w-0">
+        <div class="px-5 py-6 sm:px-8 sm:py-8 lg:pl-14 lg:pr-10 lg:py-10">
+
+          <div class="mb-3 flex items-center justify-between gap-4">
+            {lastCrumb && (
+              <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-neutral-400 dark:text-neutral-500">
+                <span>~</span>
+                {parentCrumbs.map((crumb) => (
+                  <>
+                    <span aria-hidden="true">/</span>
+                    <span>{crumb.label}</span>
+                  </>
+                ))}
+                <span aria-hidden="true">/</span>
+                <span class="text-neutral-600 dark:text-neutral-300 font-medium">{lastCrumb.label}</span>
+              </nav>
+            )}
+            {lastEditedStr && (
+              <p class="text-sm text-neutral-400 dark:text-neutral-500 shrink-0 ml-auto">
+                Last updated {lastEditedStr}
+              </p>
+            )}
+          </div>
+
+          {showTitle && (
+            <h1 class="mdx-heading mdx-page-title scroll-clearance">
+              {title}
+              {editUrl && (
+                <a href={editUrl} target="_blank" rel="noopener noreferrer"
+                   class="inline-flex align-middle ml-2 mb-1 p-0.5 rounded text-neutral-400 dark:text-neutral-500
+                          hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors
+                          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400"
+                   title="Edit this page" aria-label="Edit this page">
+                  <Pencil size={24} />
+                </a>
+              )}
+            </h1>
+          )}
+          {(author || readingTime) && (
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 -mt-4 mb-6">
+              {author && <>By {author}</>}
+              {author && readingTime && <span aria-hidden="true"> · </span>}
+              {readingTime && <>{readingTime} minute{readingTime === 1 ? "" : "s"} read</>}
+            </p>
+          )}
+          <div class="mdx-content"><slot /></div>
+
+          {config.pagination !== false && (prev || next) && (
+            <nav aria-label="Pagination" class="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-between gap-4">
+              {prev ? (
+                <a href={prev.href} class="group flex flex-col gap-0.5 no-underline">
+                  <span class="text-xs text-neutral-400 dark:text-neutral-500 flex items-center gap-1">
+                    <ChevronLeft className="w-3 h-3" /> Previous
+                  </span>
+                  <span class="text-sm font-medium text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">{prev.title}</span>
+                </a>
+              ) : <span />}
+              {next ? (
+                <a href={next.href} class="group flex flex-col items-end gap-0.5 no-underline">
+                  <span class="text-xs text-neutral-400 dark:text-neutral-500 flex items-center gap-1">
+                    Next <ChevronRight className="w-3 h-3" />
+                  </span>
+                  <span class="text-sm font-medium text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">{next.title}</span>
+                </a>
+              ) : <span />}
+            </nav>
+          )}
+        </div>
+      </main>
+
+      {tocHeadings.length > 0 && (
+        <aside aria-label="On this page" class="hidden xl:block aside-col">
+          <div class="panel p-4">
+            <TableOfContents headings={tocHeadings} client:visible />
+          </div>
+        </aside>
+      )}
+
+    </div>
+
+    {config.footer && (config.footer.text || (config.footer.links?.length ?? 0) > 0) && (
+      <footer class="flex items-center justify-between gap-4 px-4 py-3 text-sm text-neutral-400 dark:text-neutral-500">
+        {config.footer.text ? <span>{config.footer.text}</span> : <span />}
+        {config.footer.links && config.footer.links.length > 0 && (
+          <nav aria-label="Footer links" class="flex items-center gap-4">
+            {config.footer.links.map((link) => (
+              <a href={link.href} class="hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        )}
+      </footer>
+    )}
+  </body>
+</html>

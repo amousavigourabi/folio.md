@@ -1,0 +1,75 @@
+{
+  "name": "foliomd",
+  "version": "0.1.0",
+  "description": "A zero-config documentation site builder powered by Astro, MDX, and Tailwind CSS.",
+  "author": "Atour Mousavi Gourabi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amousavigourabi/folio.md.git"
+  },
+  "homepage": "https://foliopages.dev",
+  "bugs": {
+    "url": "https://github.com/amousavigourabi/folio.md/issues"
+  },
+  "bin": {
+    "folio": "./bin/folio.ts"
+  },
+  "exports": {
+    "./types": "./folio.config.ts"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "bun run validate-links && astro build",
+    "preview": "astro preview",
+    "validate-links": "bun scripts/validate-links.ts",
+    "prose": "bun scripts/prose.ts",
+    "lint": "biome check src scripts folio.config.ts",
+    "lint:fix": "biome check --write src scripts folio.config.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^6.0.3",
+    "@astrojs/react": "^5.0.7",
+    "@tailwindcss/vite": "^4.3.1",
+    "astro": "^6.4.6",
+    "fuse.js": "^7.4.2",
+    "hast-util-to-string": "^3.0.1",
+    "lucide-react": "^1.18.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-mermaid": "^3.0.0",
+    "rehype-pretty-code": "^0.14.3",
+    "remark-directive": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "satori": "^0.26.0",
+    "sharp": "^0.35.2",
+    "shiki": "^4.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.9",
+    "globby": "^16.2.0",
+    "remark-parse": "^11.0.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.22.4",
+    "typescript": "^5",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
+    "vitest": "^4.1.9"
+  },
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
+}
