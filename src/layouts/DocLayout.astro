@@ -270,7 +270,7 @@ const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: 
       <main class="panel flex-1 min-w-0">
         <div class="px-5 py-6 sm:px-8 sm:py-8 lg:pl-14 lg:pr-10 lg:py-10">
 
-          <div class="mb-3 flex items-center justify-between gap-4">
+          <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             {lastCrumb && (
               <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-neutral-400 dark:text-neutral-500">
                 <span>~</span>
@@ -285,7 +285,7 @@ const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: 
               </nav>
             )}
             {lastEditedStr && (
-              <p class="text-sm text-neutral-400 dark:text-neutral-500 shrink-0 ml-auto">
+              <p class="text-sm text-neutral-400 dark:text-neutral-500 sm:shrink-0 sm:ml-auto">
                 Last updated {lastEditedStr}
               </p>
             )}
