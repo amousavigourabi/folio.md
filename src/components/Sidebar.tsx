@@ -88,6 +88,10 @@ function SectionGroup({
   );
 }
 
+function normalizePathname(p: string): string {
+  return p.length > 1 ? p.replace(/\/$/, "") : p;
+}
+
 function initialExpanded(
   nav: NavNode[],
   href: string,
@@ -104,14 +108,15 @@ function initialExpanded(
 export function Sidebar({ nav, currentHref: initialHref, onNavigate }: Props) {
   // Read window.location.pathname at hydration time so a swap that fired before
   // client:idle hydration doesn't leave us pointing at the wrong page.
+  // Strip any trailing slash (e.g. /guide/page/) to match the nav hrefs.
   const [currentHref, setCurrentHref] = useState(() =>
     typeof window !== "undefined"
-      ? window.location.pathname
+      ? normalizePathname(window.location.pathname)
       : (initialHref ?? "/"),
   );
 
   const syncHref = useCallback(
-    () => setCurrentHref(window.location.pathname),
+    () => setCurrentHref(normalizePathname(window.location.pathname)),
     [],
   );
   const doc = typeof document !== "undefined" ? document : null;
@@ -120,7 +125,7 @@ export function Sidebar({ nav, currentHref: initialHref, onNavigate }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const href =
       typeof window !== "undefined"
-        ? window.location.pathname
+        ? normalizePathname(window.location.pathname)
         : (initialHref ?? "/");
     return initialExpanded(nav, href);
   });
