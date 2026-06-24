@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { defineConfig } from "astro/config";
 import { buildRedirects } from "./src/lib/buildRedirects";
 import folioConfig from "./folio.config";
@@ -23,6 +24,36 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 const pkgDir = fileURLToPath(new URL(".", import.meta.url));
 const contentDir = process.env.FOLIO_CONTENT_DIR ?? path.resolve(pkgDir, folioConfig.contentDir);
 
+function findMdFiles(dir: string): string[] {
+  if (!existsSync(dir)) return [];
+  const found: string[] = [];
+  for (const entry of readdirSync(dir)) {
+    const full = path.join(dir, entry);
+    if (statSync(full).isDirectory()) {
+      found.push(...findMdFiles(full));
+    } else if (entry.endsWith(".md")) {
+      found.push(full);
+    }
+  }
+  return found;
+}
+
+function noPlainMdFiles(): import("astro").AstroIntegration {
+  return {
+    name: "no-plain-md-files",
+    hooks: {
+      "astro:config:setup": () => {
+        const mdFiles = findMdFiles(contentDir);
+        if (mdFiles.length > 0) {
+          throw new Error(
+            `Plain .md files are not supported — rename these to .mdx:\n${mdFiles.map((f) => `  ${f}`).join("\n")}`
+          );
+        }
+      },
+    },
+  };
+}
+
 export default defineConfig({
   redirects: buildRedirects(contentDir),
   outDir: "./dist",
@@ -30,6 +61,7 @@ export default defineConfig({
     ? path.join(process.env.FOLIO_ROOT, "public")
     : path.join(pkgDir, "public"),
   integrations: [
+    noPlainMdFiles(),
     react(),
     mdx(),
   ],

@@ -106,7 +106,7 @@ export default defineFolioConfig({
     console.log("folio: created folio.config.ts");
   }
 
-  const docsDest = resolve(cwd, "docs", "index.md");
+  const docsDest = resolve(cwd, "docs", "index.mdx");
   if (!existsSync(docsDest)) {
     mkdirSync(resolve(cwd, "docs"), { recursive: true });
     writeFileSync(
@@ -121,7 +121,7 @@ description: My documentation homepage
 Start writing your docs here.
 `,
     );
-    console.log("folio: created docs/index.md");
+    console.log("folio: created docs/index.mdx");
   }
 
   const pkgJsonPath = resolve(cwd, "package.json");
