@@ -1,14 +1,29 @@
-import type { Element, Root } from "hast";
+import type { Element, ElementContent, Properties, Root } from "hast";
 import rehypeMermaid from "rehype-mermaid";
 import { unified } from "unified";
 import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
-/**
- * Runs rehype-mermaid twice per diagram (default + dark theme) and wraps both
- * SVGs so CSS can toggle between them based on the .dark class on <html>.
- * No extra dependencies beyond what rehype-mermaid already requires.
- */
+function h(
+  tagName: string,
+  properties: Properties,
+  children: ElementContent[] = [],
+): Element {
+  return { type: "element", tagName, properties, children };
+}
+
+const SVG: Properties = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: "14",
+  height: "14",
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: "2",
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  ariaHidden: "true",
+};
 
 const lightProcessor = unified().use(rehypeMermaid, {
   mermaidConfig: { theme: "default" },
@@ -115,6 +130,28 @@ function isMermaidPre(el: Element): boolean {
   );
 }
 
+function makeZoomButton(): Element {
+  // Build fresh icon nodes per call — a shared singleton would be mutated by
+  // downstream hast passes and corrupt every button on the page simultaneously.
+  const icon = h("svg", SVG, [
+    h("path", { d: "M15 3h6v6" }),
+    h("path", { d: "m21 3-7 7" }),
+    h("path", { d: "m3 21 7-7" }),
+    h("path", { d: "M9 21H3v-6" }),
+  ]);
+  return h(
+    "button",
+    {
+      className: ["mermaid-zoom-btn"],
+      type: "button",
+      ariaLabel: "Enlarge diagram",
+      title: "Enlarge diagram",
+      "data-mermaid-zoom": true,
+    },
+    [icon],
+  );
+}
+
 function makeWrapper(
   lightChildren: Root["children"],
   darkChildren: Root["children"],
@@ -124,6 +161,7 @@ function makeWrapper(
     tagName: "div",
     properties: { className: ["mermaid-dual"] },
     children: [
+      makeZoomButton(),
       {
         type: "element",
         tagName: "div",
@@ -151,7 +189,6 @@ const rehypeMermaidDual: Plugin<[], Root> = () => async (tree) => {
 
   if (!nodes.length) return;
 
-  // Iterate in reverse so splice() doesn't shift the indices of remaining nodes
   for (let i = nodes.length - 1; i >= 0; i--) {
     const { node, parent, index } = nodes[i];
 

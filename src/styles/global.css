@@ -284,13 +284,63 @@ html {
 
 /* Mermaid dual-theme toggle */
 .mermaid-dual {
-  @apply my-6;
+  @apply relative my-6;
 }
 .mermaid-light {
   @apply flex justify-center dark:hidden;
 }
 .mermaid-dark {
   @apply hidden justify-center dark:flex;
+}
+
+/* Mermaid enlarge button — revealed on hover */
+.mermaid-zoom-btn {
+  @apply absolute top-2 right-2 z-10 flex items-center justify-center
+         size-7 rounded-md border-0 cursor-pointer
+         bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm
+         text-neutral-500 dark:text-neutral-400
+         hover:bg-white dark:hover:bg-slate-700
+         hover:text-neutral-900 dark:hover:text-neutral-100
+         opacity-0 transition-opacity;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.mermaid-dual:hover .mermaid-zoom-btn,
+.mermaid-zoom-btn:focus-visible {
+  @apply opacity-100;
+}
+
+/* Prevent body scroll while the modal is open */
+body:has(#mermaid-modal:not([hidden])) {
+  overflow: hidden;
+}
+
+/* Mermaid zoom modal */
+.mermaid-modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-16
+         bg-black/55 backdrop-blur-sm;
+}
+.mermaid-modal-box {
+  @apply relative bg-white dark:bg-slate-900 rounded-2xl p-6
+         overflow-hidden shadow-2xl cursor-grab;
+  width: min(92vw, 1200px);
+  height: 85vh;
+  touch-action: none;
+}
+.mermaid-modal-box:active {
+  cursor: grabbing;
+}
+.mermaid-pan-target {
+  @apply absolute inset-0 flex items-center justify-center select-none;
+  transform-origin: 0 0;
+}
+.mermaid-pan-target > svg {
+  @apply block;
+  width: calc(100% - 48px); /* preserve p-6 visual padding */
+  height: auto;
+}
+.mermaid-modal-close {
+  @apply absolute top-4 right-4 icon-btn border-0 cursor-pointer z-10
+         text-neutral-300 hover:text-white hover:bg-white/15;
 }
 
 /* Page background */

@@ -12,6 +12,7 @@ jobs:
           persist-credentials: false
       - uses: oven-sh/setup-bun@v2
       - run: bun install
+      - run: bunx playwright install
       - run: bun run lint
       - name: Install Vale
         env:
