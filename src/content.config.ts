@@ -7,7 +7,7 @@ import { slugify, slugifyId } from "./lib/slugify";
 
 const docs = defineCollection({
   loader: glob({
-    pattern: "**/*.{md,mdx}",
+    pattern: "**/*.mdx",
     base: config.contentDir,
     generateId: ({ entry }) => {
       const withoutExt = entry.replace(/\.[^.]+$/, "");

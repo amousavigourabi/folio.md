@@ -28,7 +28,7 @@ yarn dlx folio init  # yarn
 This creates the following, skipping any that already exist:
 
 1. **`folio.config.ts`**: your site configuration
-2. **`docs/index.md`**: a starter welcome page
+2. **`docs/index.mdx`**: a starter welcome page
 3. **`package.json` scripts**: `folio:dev`, `folio:build`, `folio:preview`, `folio:check`, `folio:lint`
 
 # Your configuration
@@ -56,15 +56,15 @@ npm run folio:dev    # npm
 yarn folio:dev       # yarn
 ```
 
-Opens a dev server at `http://localhost:4321`. folio.md picks up changes to your `.md` and `.mdx` files instantly.
+Opens a dev server at `http://localhost:4321`. folio.md picks up changes to your `.mdx` files instantly.
 
 Under the hood this runs `astro dev` inside the folio-md package directory, pointed at your `folio.config.ts` for all paths.
 
 # Add content
 
-Drop `.md` or `.mdx` files into your `contentDir`. Every file becomes a page. Nested folders become collapsible sidebar sections. Each file needs at minimum a `title` in its frontmatter:
+Drop `.mdx` files into your `contentDir`. Every file becomes a page. Nested folders become collapsible sidebar sections. Each file needs at minimum a `title` in its frontmatter:
 
-```md
+```mdx
 ---
 title: Getting Started
 description: How to install and run the project.
