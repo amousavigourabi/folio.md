@@ -1,0 +1,110 @@
+---
+import { X } from "lucide-react";
+---
+
+<div
+  id="mermaid-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Enlarged diagram"
+  hidden
+  transition:persist
+>
+  <div class="mermaid-modal-overlay" id="mermaid-modal-backdrop">
+    <button
+      id="mermaid-modal-close"
+      class="mermaid-modal-close"
+      aria-label="Close enlarged diagram"
+    >
+      <X size={16} aria-hidden="true" />
+    </button>
+    <div class="mermaid-modal-box" id="mermaid-modal-box"></div>
+  </div>
+</div>
+
+<script>
+  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
+
+  let pz: PanzoomObject | null = null;
+  function openModal(source: SVGElement) {
+    const modal = document.getElementById("mermaid-modal") as HTMLElement | null;
+    const box = document.getElementById("mermaid-modal-box");
+    if (!modal || !box) return;
+
+    const clone = source.cloneNode(true) as SVGElement;
+    clone.removeAttribute("width");
+    clone.removeAttribute("height");
+    clone.removeAttribute("style");
+
+    box.querySelector(".mermaid-pan-target")?.remove();
+    const wrapper = document.createElement("div");
+    wrapper.className = "mermaid-pan-target";
+    wrapper.appendChild(clone);
+    box.appendChild(wrapper);
+
+    pz?.destroy();
+    pz = Panzoom(wrapper, { minScale: 0.25, maxScale: 8, canvas: true, cursor: "" });
+
+    modal.hidden = false;
+  }
+
+  function closeModal() {
+    const modal = document.getElementById("mermaid-modal") as HTMLElement | null;
+    if (modal) modal.hidden = true;
+  }
+
+  function init() {
+    const overlay = document.getElementById("mermaid-modal-backdrop");
+    const box = document.getElementById("mermaid-modal-box");
+    if (!overlay || !box) return;
+
+    if (!overlay.dataset.wired) {
+      overlay.dataset.wired = "1";
+
+      document.getElementById("mermaid-modal-close")
+        ?.addEventListener("click", closeModal);
+
+      overlay.addEventListener("click", (e) => {
+        if ((e.target as HTMLElement) === overlay) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        const modal = document.getElementById("mermaid-modal") as HTMLElement | null;
+        if (e.key === "Escape" && modal && !modal.hidden) closeModal();
+      });
+
+      box.addEventListener("wheel", (e) => {
+        if (!pz) return;
+        e.preventDefault();
+        if (e.ctrlKey || e.metaKey) {
+          pz.zoomWithWheel(e);
+        } else {
+          const { x, y } = pz.getPan();
+          pz.pan(x - e.deltaX, y - e.deltaY);
+        }
+      }, { passive: false });
+
+      box.addEventListener("dblclick", () => {
+        if (!pz) return;
+        pz.zoom(1, { animate: true });
+        pz.pan(0, 0, { animate: true });
+      });
+    }
+
+    document.querySelectorAll<HTMLElement>("[data-mermaid-zoom]").forEach((btn) => {
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = "1";
+      btn.addEventListener("click", () => {
+        const dual = btn.closest<HTMLElement>(".mermaid-dual");
+        if (!dual) return;
+        const isDark = document.documentElement.classList.contains("dark");
+        const source = dual.querySelector<SVGElement>(
+          isDark ? ".mermaid-dark svg" : ".mermaid-light svg",
+        );
+        if (source) openModal(source);
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", init);
+</script>

@@ -2,6 +2,7 @@
 import "@/styles/global.css";
 import { CookieBanner } from "@/components/CookieBanner";
 import CopyCodeButton from "@/components/CopyCodeButton.astro";
+import MermaidZoom from "@/components/MermaidZoom.astro";
 import { MobileMenuButton } from "@/components/MobileMenuButton";
 import { type IconName, NavIcon, iconNames } from "@/components/NavIcon";
 import { SearchBar } from "@/components/SearchBar";
@@ -258,6 +259,7 @@ const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: 
     </nav>
 
     <CopyCodeButton />
+    <MermaidZoom />
     {config.gaId && <CookieBanner gaId={config.gaId} client:only="react" transition:persist />}
     <div class="flex gap-4">
 
