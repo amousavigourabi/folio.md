@@ -358,39 +358,39 @@ html.dark {
 aside[data-callout] {
   @apply my-5 px-4 py-3 rounded-lg border-l-4 text-sm
          text-neutral-700 dark:text-neutral-300;
-}
-.callout-title {
-  @apply !font-semibold !text-xs !uppercase !tracking-wider !mb-1.5;
+  & > p:first-child {
+    @apply font-bold text-xs uppercase tracking-wider mb-1.5;
+  }
 }
 aside[data-callout="note"] {
   border-color: oklch(68% 0.18 var(--accent-h));
   background-color: oklch(95% 0.03 var(--accent-h));
-  .callout-title {
+  & > p:first-child {
     color: oklch(43% 0.2 var(--accent-h));
   }
   :where(.dark, .dark *) & {
     border-color: oklch(55% 0.2 var(--accent-h));
     background-color: oklch(18% 0.06 var(--accent-h) / 0.5);
-    .callout-title {
+    & > p:first-child {
       color: oklch(74% 0.16 var(--accent-h));
     }
   }
 }
 aside[data-callout="tip"] {
   @apply border-teal-500 bg-teal-50 dark:bg-teal-950/40;
-  .callout-title {
+  & > p:first-child {
     @apply text-teal-700 dark:text-teal-400;
   }
 }
 aside[data-callout="warning"] {
   @apply border-amber-500 bg-amber-50 dark:bg-amber-950/40;
-  .callout-title {
+  & > p:first-child {
     @apply text-amber-700 dark:text-amber-400;
   }
 }
 aside[data-callout="danger"] {
   @apply border-red-500 bg-red-50 dark:bg-red-950/40;
-  .callout-title {
+  & > p:first-child {
     @apply text-red-700 dark:text-red-400;
   }
 }
