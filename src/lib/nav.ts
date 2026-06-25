@@ -29,14 +29,14 @@ export type Crumb = { label: string; href?: string };
 export function buildNavTree(
   entries: {
     id: string;
+    sortKey: string;
     data: { title: string; icon?: IconName; alias?: string };
   }[],
 ): NavNode[] {
-  // IDs are already clean slugs from the generateId in content.config.ts
   const sorted = [...entries].sort((a, b) => {
     if (a.id === "index") return -1;
     if (b.id === "index") return 1;
-    return a.id.localeCompare(b.id);
+    return a.sortKey.localeCompare(b.sortKey);
   });
 
   const nav: NavNode[] = [];

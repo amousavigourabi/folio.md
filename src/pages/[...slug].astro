@@ -8,16 +8,25 @@ import { buildGitDateMap } from "@/lib/gitDates";
 import { buildBreadcrumbMap, buildNavTree, buildPageList } from "@/lib/nav";
 import type { Crumb, NavNode, NavPage } from "@/lib/nav";
 import { calcReadingTime } from "@/lib/readingTime";
+import { slugifyIdOrdered } from "@/lib/slugify";
 import config from "@root/folio.config";
 
 export async function getStaticPaths() {
   const allDocs = await getCollection("docs");
   const pages = allDocs.filter(isContentPage);
   const gitDates = buildGitDateMap(config.contentDir);
-  const nav = buildNavTree(allDocs);
+  const contentDirAbs = path.resolve(config.contentDir);
+  const docsWithSortKeys = allDocs.map((entry) => ({
+    ...entry,
+    sortKey: entry.filePath
+      ? slugifyIdOrdered(
+          path.relative(contentDirAbs, entry.filePath).replace(/\.[^.]+$/, ""),
+        )
+      : entry.id,
+  }));
+  const nav = buildNavTree(docsWithSortKeys);
   const breadcrumbMap = buildBreadcrumbMap(nav);
   const pageList = buildPageList(nav);
-  const contentDirAbs = path.resolve(config.contentDir);
   return pages.map((entry) => {
     const currentHref = entry.id === "index" ? "/" : `/${entry.id}`;
     const pageIndex = pageList.findIndex((p) => p.href === currentHref);

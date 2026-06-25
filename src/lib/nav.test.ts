@@ -3,6 +3,7 @@ import { buildBreadcrumbMap, buildNavTree, buildPageList } from "./nav";
 
 const entry = (id: string, title: string, icon?: string) => ({
   id,
+  sortKey: id,
   data: { title, icon } as { title: string; icon?: string },
 });
 
@@ -63,6 +64,27 @@ describe("buildNavTree", () => {
   it("Title Cases the directory name as section title", () => {
     const [node] = buildNavTree([entry("quick-start/intro", "Intro")]);
     expect(node).toMatchObject({ type: "section", title: "Quick Start" });
+  });
+
+  it("sorts entries by numeric sort key when provided, overriding alphabetical order", () => {
+    const nav = buildNavTree([
+      {
+        id: "guide/configuration",
+        sortKey: "guide/06-configuration",
+        data: { title: "Configuration" },
+      },
+      {
+        id: "guide/writing-content",
+        sortKey: "guide/01-writing-content",
+        data: { title: "Writing Content" },
+      },
+    ]);
+    const section = nav[0];
+    expect(section.type).toBe("section");
+    if (section.type === "section") {
+      expect(section.children[0].href).toBe("/guide/writing-content"); // 01 first
+      expect(section.children[1].href).toBe("/guide/configuration"); // 06 second
+    }
   });
 });
 
