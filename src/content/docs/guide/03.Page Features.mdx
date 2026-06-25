@@ -33,7 +33,7 @@ A "Last updated" line appears at the top-right of each page. folio.md reads the 
 
 folio.md locale-formats the date using the `seo.locale` value from `folio.config.ts`, defaulting to `en-US`. It omits the date when git history is unavailable, for example in a fresh clone with no commits or on a host that checks out without git history.
 
-::: tip
+:::tip
 When deploying with GitHub Actions, pass `fetch-depth: 0` to `actions/checkout` so the full commit history is available. See [Deployment](/guide/deployment) for an example workflow.
 :::
 

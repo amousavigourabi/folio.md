@@ -145,10 +145,10 @@ alias: /guide/new-page-title
 ---
 ```
 
-::: note
+:::note
 If another page links to a redirect stub instead of its destination, folio.md emits an `ALIAS` warning at build time. Update those links to point to the destination directly.
 :::
 
-::: warning
+:::warning
 If the alias file contains body content below the frontmatter, that content is silently discarded. The page is never rendered. folio.md emits an `ALIAS [non-empty]` warning at build time to catch this.
 :::
