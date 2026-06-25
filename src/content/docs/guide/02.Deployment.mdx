@@ -35,7 +35,7 @@ Add a workflow at `.github/workflows/deploy.yml`. Choose the tab for your packag
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [master]
 permissions:
   contents: read
   pages: write
@@ -70,7 +70,7 @@ jobs:
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [master]
 permissions:
   contents: read
   pages: write
@@ -107,7 +107,7 @@ jobs:
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [master]
 permissions:
   contents: read
   pages: write
@@ -159,7 +159,7 @@ pages:
     paths:
       - public
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
 ```
 
 **npm / yarn**
@@ -175,7 +175,7 @@ pages:
     paths:
       - public
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
 ```
 
 ::: note
