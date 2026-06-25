@@ -140,7 +140,7 @@ export function SearchBar() {
       ref={containerRef}
       className="relative w-72 sm:w-[28rem] max-sm:w-auto max-sm:flex-1 max-sm:mx-3"
     >
-      <label className="flex items-center gap-3 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-neutral-200 dark:border-neutral-700 shadow-sm px-4 h-12 cursor-text">
+      <label className="flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-900 border border-neutral-200 dark:border-neutral-700 shadow-sm px-4 h-12 cursor-text">
         <span className="sr-only">Search</span>
         <Search
           aria-hidden="true"
@@ -170,7 +170,7 @@ export function SearchBar() {
           role="listbox"
           tabIndex={-1}
           aria-label="Search results"
-          className="absolute top-full mt-2 w-full p-1 z-50 max-h-80 overflow-y-auto rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-neutral-200 dark:border-neutral-700 shadow-lg"
+          className="absolute top-full mt-2 w-full p-1 z-50 max-h-80 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-neutral-200 dark:border-neutral-700 shadow-lg"
         >
           {results.map((entry, i) => (
             <button
