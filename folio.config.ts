@@ -161,6 +161,7 @@ const raw = {
       "MIT",
       "MPL",
       "[Nn]avbar",
+      "Panzoom",
       "nginx",
       "npm",
       "Globby",
