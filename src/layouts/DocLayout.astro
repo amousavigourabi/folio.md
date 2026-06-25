@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import AsidePanel from "@/components/AsidePanel.astro";
 import { CookieBanner } from "@/components/CookieBanner";
 import CopyCodeButton from "@/components/CopyCodeButton.astro";
 import MermaidZoom from "@/components/MermaidZoom.astro";
@@ -263,11 +264,9 @@ const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: 
     {config.gaId && <CookieBanner gaId={config.gaId} client:only="react" transition:persist />}
     <div class="flex gap-4">
 
-      <aside aria-label="Sidebar" class="hidden lg:block aside-col" transition:persist>
-        <div class="panel p-4">
-          <Sidebar nav={nav} currentHref={currentHref} client:idle />
-        </div>
-      </aside>
+      <AsidePanel label="Sidebar" class="hidden lg:block" transition:persist>
+        <Sidebar nav={nav} currentHref={currentHref} client:idle />
+      </AsidePanel>
 
       <main class="panel flex-1 min-w-0">
         <div class="px-5 py-6 sm:px-8 sm:py-8 lg:pl-14 lg:pr-10 lg:py-10">
@@ -340,11 +339,9 @@ const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: 
       </main>
 
       {tocHeadings.length > 0 && (
-        <aside aria-label="On this page" class="hidden xl:block aside-col">
-          <div class="panel p-4">
-            <TableOfContents headings={tocHeadings} client:visible />
-          </div>
-        </aside>
+        <AsidePanel label="On this page" class="hidden xl:block">
+          <TableOfContents headings={tocHeadings} client:visible />
+        </AsidePanel>
       )}
 
     </div>

@@ -1,0 +1,16 @@
+---
+interface Props {
+  label: string;
+  class?: string;
+}
+
+const { label, class: className } = Astro.props;
+---
+
+<aside aria-label={label} class:list={["aside-col", className]}>
+  <div class="panel overflow-hidden">
+    <div class="p-4 overflow-y-auto max-h-[calc(100vh-7.5rem)]">
+      <slot />
+    </div>
+  </div>
+</aside>

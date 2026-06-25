@@ -20,8 +20,6 @@ html {
 /* Sticky sidebar column — shared layout for the left nav and right ToC asides */
 @utility aside-col {
   @apply w-72 shrink-0 self-start sticky top-24;
-  max-height: calc(100vh - 7.5rem);
-  overflow-y: auto;
 }
 
 /* Shared panel surface — glass card used for sidebar, main content, and ToC */
