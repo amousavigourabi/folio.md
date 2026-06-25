@@ -29,14 +29,14 @@ export type Crumb = { label: string; href?: string };
 export function buildNavTree(
   entries: {
     id: string;
+    sortKey: string;
     data: { title: string; icon?: IconName; alias?: string };
   }[],
 ): NavNode[] {
-  // IDs are already clean slugs from the generateId in content.config.ts
   const sorted = [...entries].sort((a, b) => {
     if (a.id === "index") return -1;
     if (b.id === "index") return 1;
-    return a.id.localeCompare(b.id);
+    return a.sortKey.localeCompare(b.sortKey);
   });
 
   const nav: NavNode[] = [];
@@ -66,7 +66,7 @@ export function buildNavTree(
     if (parts.length > 1 && last === SECTION_SENTINEL) {
       if (parts.length !== 2) {
         console.warn(
-          `[folio] "${entry.id}": _section.mdx must be directly inside a top-level folder — ignoring.`,
+          `[folio] "${entry.id}": _section.mdx must be directly inside a top-level folder, ignoring.`,
         );
         continue;
       }
@@ -80,7 +80,7 @@ export function buildNavTree(
 
     if (parts.length > 3) {
       console.warn(
-        `[folio] "${entry.id}" is nested more than 3 levels deep — consider keeping content within 2 levels of folder nesting.`,
+        `[folio] "${entry.id}" is nested more than 3 levels deep. Consider keeping content within 2 levels of folder nesting.`,
       );
     }
 

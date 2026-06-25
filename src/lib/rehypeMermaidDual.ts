@@ -131,7 +131,7 @@ function isMermaidPre(el: Element): boolean {
 }
 
 function makeZoomButton(): Element {
-  // Build fresh icon nodes per call — a shared singleton would be mutated by
+  // Build fresh icon nodes per call; a shared singleton would be mutated by
   // downstream hast passes and corrupt every button on the page simultaneously.
   const icon = h("svg", SVG, [
     h("path", { d: "M15 3h6v6" }),

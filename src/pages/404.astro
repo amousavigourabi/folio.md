@@ -1,11 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import DocLayout from "@/layouts/DocLayout.astro";
+import { getDocs } from "@/lib/docs";
 import { buildNavTree } from "@/lib/nav";
 import { ArrowLeft, Bug } from "lucide-react";
 
-const allDocs = await getCollection("docs");
-const nav = buildNavTree(allDocs);
+const nav = buildNavTree(await getDocs());
 ---
 
 <DocLayout title="Page not found" showTitle={false} noIndex nav={nav} currentHref="">

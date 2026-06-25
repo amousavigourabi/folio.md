@@ -21,7 +21,7 @@ async function loadFonts() {
   } catch (err) {
     const cause = err instanceof Error ? err.message : String(err);
     throw new Error(
-      `folio: failed to load OG image fonts from Bunny CDN — ${cause}`,
+      `folio: failed to load OG image fonts from Bunny CDN: ${cause}`,
     );
   }
   return fontCache;

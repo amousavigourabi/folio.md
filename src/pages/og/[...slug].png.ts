@@ -1,5 +1,4 @@
-import { getCollection } from "astro:content";
-import { isContentPage } from "@/lib/docs";
+import { getDocs, isContentPage } from "@/lib/docs";
 import { generateOgImage } from "@/lib/generateOgImage";
 import config from "@root/folio.config";
 import type { APIRoute } from "astro";
@@ -7,7 +6,7 @@ import type { APIRoute } from "astro";
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const docs = (await getCollection("docs")).filter(isContentPage);
+  const docs = (await getDocs()).filter(isContentPage);
   return docs.map((doc) => ({
     params: { slug: doc.id },
     props: { doc },

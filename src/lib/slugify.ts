@@ -36,3 +36,14 @@ export function slugifyId(id: string): string {
     .map((segment) => slugify(segment.replace(/^\d+[.\s-]+/, "").trim()))
     .join("/");
 }
+
+export function slugifyIdOrdered(id: string): string {
+  return id
+    .split("/")
+    .map((segment) => {
+      const match = segment.match(/^(\d+)[.\s-]+(.*)$/);
+      if (match) return `${match[1]}-${slugify(match[2].trim())}`;
+      return slugify(segment.trim());
+    })
+    .join("/");
+}

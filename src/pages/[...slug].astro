@@ -1,9 +1,9 @@
 ---
 import path from "node:path";
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import { mdxComponents } from "@/components/mdx/index";
 import DocLayout from "@/layouts/DocLayout.astro";
-import { isContentPage } from "@/lib/docs";
+import { getDocs, isContentPage } from "@/lib/docs";
 import { buildGitDateMap } from "@/lib/gitDates";
 import { buildBreadcrumbMap, buildNavTree, buildPageList } from "@/lib/nav";
 import type { Crumb, NavNode, NavPage } from "@/lib/nav";
@@ -11,13 +11,13 @@ import { calcReadingTime } from "@/lib/readingTime";
 import config from "@root/folio.config";
 
 export async function getStaticPaths() {
-  const allDocs = await getCollection("docs");
+  const allDocs = await getDocs();
   const pages = allDocs.filter(isContentPage);
   const gitDates = buildGitDateMap(config.contentDir);
+  const contentDirAbs = path.resolve(config.contentDir);
   const nav = buildNavTree(allDocs);
   const breadcrumbMap = buildBreadcrumbMap(nav);
   const pageList = buildPageList(nav);
-  const contentDirAbs = path.resolve(config.contentDir);
   return pages.map((entry) => {
     const currentHref = entry.id === "index" ? "/" : `/${entry.id}`;
     const pageIndex = pageList.findIndex((p) => p.href === currentHref);

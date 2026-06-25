@@ -1,5 +1,4 @@
-import { getCollection } from "astro:content";
-import { isIndexablePage } from "@/lib/docs";
+import { getDocs, isIndexablePage } from "@/lib/docs";
 import { buildGitDateMap } from "@/lib/gitDates";
 import { slugifyId } from "@/lib/slugify";
 import config from "@root/folio.config";
@@ -9,7 +8,7 @@ export const prerender = true;
 
 export const GET: APIRoute = async () => {
   const base = config.siteUrl.replace(/\/$/, "");
-  const docs = await getCollection("docs");
+  const docs = await getDocs();
   const gitDates = buildGitDateMap(config.contentDir);
 
   const urls = docs.filter(isIndexablePage).map((doc) => {

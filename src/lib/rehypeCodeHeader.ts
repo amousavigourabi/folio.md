@@ -50,7 +50,7 @@ const rehypeCodeHeader: Plugin<[], Root> = () => (tree) => {
       titleIdx !== -1 ? hastToString(node.children[titleIdx] as Element) : null;
     if (titleIdx !== -1) node.children.splice(titleIdx, 1);
 
-    // Build fresh icon nodes per code block — module-level singletons would be
+    // Build fresh icon nodes per code block; module-level singletons would be
     // shared by reference across all blocks, so any downstream hast mutation
     // would corrupt every copy button on the page simultaneously.
     const copyIcon = h("svg", SVG, [

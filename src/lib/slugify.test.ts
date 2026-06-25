@@ -54,7 +54,7 @@ describe("slugifyId", () => {
     expect(slugifyId("guide/getting-started")).toBe("guide/getting-started");
   });
 
-  it("converts _section to 'section' — explaining why content.config.ts must special-case it", () => {
+  it("converts _section to 'section', which is why content.config.ts must special-case it", () => {
     expect(slugify("_section")).toBe("section");
     expect(slugifyId("guide/_section")).toBe("guide/section");
   });

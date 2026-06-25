@@ -17,14 +17,14 @@ const rehypeHeadingOrder: Plugin<[], Root> = () => (tree, file) => {
       const from = prevLevel === 0 ? "document start" : `h${prevLevel}`;
       const text = hastToString(node).trim().slice(0, 60);
       console.warn(
-        `[folio] ${file.path}: heading level skipped — "${text}" is h${level} but previous was ${from}`,
+        `[folio] ${file.path}: heading level skipped. "${text}" is h${level} but previous was ${from}`,
       );
     }
     prevLevel = level;
   });
   if (count > MAX_HEADINGS) {
     console.warn(
-      `[folio] ${file.path}: ${count} headings found — consider splitting this page`,
+      `[folio] ${file.path}: ${count} headings found. Consider splitting this page.`,
     );
   }
 };
