@@ -30,7 +30,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/mdx": "^6.0.3",
+    "@astrojs/mdx": "^7.0.0",
     "@astrojs/react": "^5.0.7",
     "@panzoom/panzoom": "^4.6.2",
     "@tailwindcss/vite": "^4.3.1",
