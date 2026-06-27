@@ -15,7 +15,7 @@ export type NavSection = {
   title: string;
   id: string;
   icon?: IconName;
-  children: NavPage[];
+  children: NavNode[];
 };
 
 export type NavNode = NavPage | NavSection;
@@ -48,17 +48,24 @@ export function buildNavTree(
   const nav: NavNode[] = [];
   const sections = new Map<string, NavSection>();
 
-  function getOrCreateSection(sectionKey: string): NavSection {
-    let section = sections.get(sectionKey);
+  function getOrCreateSection(sectionId: string): NavSection {
+    let section = sections.get(sectionId);
     if (!section) {
+      const nameParts = sectionId.split("/");
+      const name = nameParts[nameParts.length - 1];
       section = {
         type: "section",
-        title: toTitle(sectionKey),
-        id: sectionKey,
+        title: toTitle(name),
+        id: sectionId,
         children: [],
       };
-      sections.set(sectionKey, section);
-      nav.push(section);
+      sections.set(sectionId, section);
+      if (nameParts.length === 1) {
+        nav.push(section);
+      } else {
+        const parentId = nameParts.slice(0, -1).join("/");
+        getOrCreateSection(parentId).children.push(section);
+      }
     }
     return section;
   }
@@ -70,13 +77,15 @@ export function buildNavTree(
     const last = parts[parts.length - 1];
 
     if (parts.length > 1 && last === SECTION_SENTINEL) {
-      if (parts.length !== 2) {
+      // Allow _section at depth 1 (guide/_section) and depth 2 (guide/sub/_section)
+      if (parts.length > 3) {
         console.warn(
-          `[folio] "${entry.id}": _section.mdx must be directly inside a top-level folder, ignoring.`,
+          `[folio] "${entry.id}": _section.mdx is nested too deeply, ignoring.`,
         );
         continue;
       }
-      const section = getOrCreateSection(parts[0]);
+      const sectionId = parts.slice(0, -1).join("/");
+      const section = getOrCreateSection(sectionId);
       section.title = entry.data.title;
       if (entry.data.icon) section.icon = entry.data.icon;
       continue;
@@ -107,19 +116,21 @@ export function buildNavTree(
         icon: entry.data.icon,
       });
     } else {
-      getOrCreateSection(parts[0]).children.push({
+      const sectionId = parts.slice(0, -1).join("/");
+      getOrCreateSection(sectionId).children.push({
         type: "page",
         title: entry.data.title,
         href,
         id: entry.id,
-        icon: entry.data.icon,
       });
     }
   }
 
+  // Enforce index page for top-level sections only
   for (const [sectionKey, section] of sections) {
+    if (sectionKey.includes("/")) continue;
     const indexIdx = section.children.findIndex(
-      (c) => c.id === `${sectionKey}/index`,
+      (c) => c.type === "page" && c.id === `${sectionKey}/index`,
     );
     if (indexIdx === -1) {
       throw new Error(
@@ -137,19 +148,25 @@ export function buildNavTree(
 
 export function buildBreadcrumbMap(nav: NavNode[]): Map<string, Crumb[]> {
   const map = new Map<string, Crumb[]>();
-  for (const node of nav) {
-    if (node.type === "page") {
-      map.set(node.href, [{ label: node.title }]);
-    } else {
-      const indexHref = node.children[0]?.href;
-      for (const child of node.children) {
-        map.set(child.href, [
-          { label: node.title, href: indexHref },
-          { label: child.title },
-        ]);
+
+  function traverse(nodes: NavNode[], ancestors: Crumb[]) {
+    for (const node of nodes) {
+      if (node.type === "page") {
+        map.set(node.href, [...ancestors, { label: node.title }]);
+      } else {
+        const indexPage = node.children.find(
+          (c): c is NavPage => c.type === "page" && c.id === `${node.id}/index`,
+        );
+        const sectionCrumb: Crumb = {
+          label: node.title,
+          href: indexPage?.href,
+        };
+        traverse(node.children, [...ancestors, sectionCrumb]);
       }
     }
   }
+
+  traverse(nav, []);
   return map;
 }
 
@@ -157,9 +174,12 @@ export type Heading = { depth: number; slug: string; text: string };
 
 export function buildPageList(nav: NavNode[]): NavPage[] {
   const pages: NavPage[] = [];
-  for (const node of nav) {
-    if (node.type === "page") pages.push(node);
-    else pages.push(...node.children);
+  function collect(nodes: NavNode[]) {
+    for (const node of nodes) {
+      if (node.type === "page") pages.push(node);
+      else collect(node.children);
+    }
   }
+  collect(nav);
   return pages;
 }
