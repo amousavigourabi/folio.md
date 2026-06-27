@@ -141,8 +141,12 @@ export function buildBreadcrumbMap(nav: NavNode[]): Map<string, Crumb[]> {
     if (node.type === "page") {
       map.set(node.href, [{ label: node.title }]);
     } else {
+      const indexHref = node.children[0]?.href;
       for (const child of node.children) {
-        map.set(child.href, [{ label: node.title }, { label: child.title }]);
+        map.set(child.href, [
+          { label: node.title, href: indexHref },
+          { label: child.title },
+        ]);
       }
     }
   }

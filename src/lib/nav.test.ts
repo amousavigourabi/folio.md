@@ -206,7 +206,7 @@ describe("buildBreadcrumbMap", () => {
     expect(map.get("/about")).toEqual([{ label: "About" }]);
   });
 
-  it("maps a section child to [section, page] breadcrumbs", () => {
+  it("maps a section child to [section, page] breadcrumbs with section href pointing to index", () => {
     const map = buildBreadcrumbMap(
       buildNavTree([
         entry("guide/index", "Overview"),
@@ -214,8 +214,34 @@ describe("buildBreadcrumbMap", () => {
       ]),
     );
     expect(map.get("/guide/setup")).toEqual([
-      { label: "Guide" },
+      { label: "Guide", href: "/guide" },
       { label: "Setup" },
+    ]);
+  });
+
+  it("maps the index page itself with section href pointing to index", () => {
+    const map = buildBreadcrumbMap(
+      buildNavTree([
+        entry("guide/index", "Overview"),
+        entry("guide/setup", "Setup"),
+      ]),
+    );
+    expect(map.get("/guide")).toEqual([
+      { label: "Guide", href: "/guide" },
+      { label: "Overview" },
+    ]);
+  });
+
+  it("maps a three-segment URL under a section to [section, page] with correct section href", () => {
+    const map = buildBreadcrumbMap(
+      buildNavTree([
+        entry("guide/index", "Overview"),
+        entry("guide/sub/deep-page", "Deep Page"),
+      ]),
+    );
+    expect(map.get("/guide/sub/deep-page")).toEqual([
+      { label: "Guide", href: "/guide" },
+      { label: "Deep Page" },
     ]);
   });
 });
