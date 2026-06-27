@@ -138,13 +138,24 @@ describe("buildNavTree warnings", () => {
     expect(warned.some((w) => w.includes("icon"))).toBe(false);
   });
 
-  it("warns and ignores _section that is not directly inside a top-level folder", () => {
+  it("does not warn for _section directly inside a second-level folder", () => {
     buildNavTree([
       entry("guide/index", "Overview"),
       entry("guide/sub/_section", "Sub", "Star"),
       entry("guide/sub/page", "Page"),
     ]);
-    expect(warned.some((w) => w.includes("guide/sub/_section"))).toBe(true);
+    expect(warned.some((w) => w.includes("guide/sub/_section"))).toBe(false);
+  });
+
+  it("warns and ignores _section nested more than two folders deep", () => {
+    buildNavTree([
+      entry("guide/index", "Overview"),
+      entry("guide/sub/deep/_section", "Deep", "Star"),
+      entry("guide/sub/page", "Page"),
+    ]);
+    expect(warned.some((w) => w.includes("guide/sub/deep/_section"))).toBe(
+      true,
+    );
   });
 
   it("warns when nesting exceeds 3 levels deep", () => {
@@ -157,6 +168,66 @@ describe("buildNavTree warnings", () => {
   it("does not warn for exactly 3 levels deep", () => {
     buildNavTree([entry("a/index", "Overview"), entry("a/b/page", "Page")]);
     expect(warned.some((w) => w.includes("3 levels"))).toBe(false);
+  });
+});
+
+describe("buildNavTree nested sections", () => {
+  it("creates a sub-section for three-part paths", () => {
+    const [section] = buildNavTree([
+      entry("guide/index", "Overview"),
+      entry("guide/advanced/caching", "Caching"),
+    ]);
+    expect(section.type).toBe("section");
+    if (section.type === "section") {
+      const sub = section.children.find((c) => c.id === "guide/advanced");
+      expect(sub).toMatchObject({ type: "section", title: "Advanced" });
+      if (sub?.type === "section") {
+        expect(sub.children[0]).toMatchObject({
+          href: "/guide/advanced/caching",
+        });
+      }
+    }
+  });
+
+  it("applies title and icon from sub-section _section entry", () => {
+    const [section] = buildNavTree([
+      entry("guide/index", "Overview"),
+      entry("guide/advanced/_section", "Advanced Topics", "Star"),
+      entry("guide/advanced/caching", "Caching"),
+    ]);
+    if (section.type === "section") {
+      const sub = section.children.find((c) => c.id === "guide/advanced");
+      expect(sub).toMatchObject({
+        type: "section",
+        title: "Advanced Topics",
+        icon: "Star",
+      });
+    }
+  });
+
+  it("does not include sub-section _section entry as a child page", () => {
+    const [section] = buildNavTree([
+      entry("guide/index", "Overview"),
+      entry("guide/advanced/_section", "Advanced", "Star"),
+      entry("guide/advanced/caching", "Caching"),
+    ]);
+    if (section.type === "section") {
+      const sub = section.children.find((c) => c.id === "guide/advanced");
+      if (sub?.type === "section") {
+        expect(
+          sub.children.every((c) => c.id !== "guide/advanced/_section"),
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("does not require an index page for sub-sections", () => {
+    expect(() =>
+      buildNavTree([
+        entry("guide/index", "Overview"),
+        entry("guide/advanced/caching", "Caching"),
+      ]),
+    ).not.toThrow();
   });
 });
 
@@ -232,7 +303,7 @@ describe("buildBreadcrumbMap", () => {
     ]);
   });
 
-  it("maps a three-segment URL under a section to [section, page] with correct section href", () => {
+  it("maps a three-segment URL to [section, sub-section, page] breadcrumbs", () => {
     const map = buildBreadcrumbMap(
       buildNavTree([
         entry("guide/index", "Overview"),
@@ -241,6 +312,22 @@ describe("buildBreadcrumbMap", () => {
     );
     expect(map.get("/guide/sub/deep-page")).toEqual([
       { label: "Guide", href: "/guide" },
+      { label: "Sub", href: undefined },
+      { label: "Deep Page" },
+    ]);
+  });
+
+  it("includes sub-section href when sub-section has an index page", () => {
+    const map = buildBreadcrumbMap(
+      buildNavTree([
+        entry("guide/index", "Overview"),
+        entry("guide/sub/index", "Sub Overview"),
+        entry("guide/sub/deep-page", "Deep Page"),
+      ]),
+    );
+    expect(map.get("/guide/sub/deep-page")).toEqual([
+      { label: "Guide", href: "/guide" },
+      { label: "Sub", href: "/guide/sub" },
       { label: "Deep Page" },
     ]);
   });

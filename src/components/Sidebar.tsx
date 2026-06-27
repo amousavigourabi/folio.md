@@ -36,6 +36,12 @@ function PageLink({
   );
 }
 
+function hasActiveDescendant(children: NavNode[], href: string): boolean {
+  return children.some((c) =>
+    c.type === "page" ? c.href === href : hasActiveDescendant(c.children, href),
+  );
+}
+
 function SectionGroup({
   node,
   currentHref,
@@ -45,18 +51,19 @@ function SectionGroup({
 }: {
   node: NavSection;
   currentHref: string;
-  expanded: boolean;
-  onToggle: () => void;
+  expanded: Record<string, boolean>;
+  onToggle: (id: string) => void;
   onNavigate?: () => void;
 }) {
+  const isExpanded = !!expanded[node.id];
   const childActive =
-    !expanded && node.children.some((c) => c.href === currentHref);
+    !isExpanded && hasActiveDescendant(node.children, currentHref);
   return (
     <div>
       <button
         type="button"
-        onClick={onToggle}
-        aria-expanded={expanded}
+        onClick={() => onToggle(node.id)}
+        aria-expanded={isExpanded}
         data-active={childActive || undefined}
         className="w-full nav-link justify-between"
       >
@@ -72,16 +79,27 @@ function SectionGroup({
           className="nav-chevron"
         />
       </button>
-      {expanded && (
+      {isExpanded && (
         <div className="ml-3 mt-0.5 pl-3 border-l border-neutral-200 dark:border-neutral-700 space-y-0.5">
-          {node.children.map((child) => (
-            <PageLink
-              key={child.id}
-              page={child}
-              currentHref={currentHref}
-              onNavigate={onNavigate}
-            />
-          ))}
+          {node.children.map((child) =>
+            child.type === "page" ? (
+              <PageLink
+                key={child.id}
+                page={child}
+                currentHref={currentHref}
+                onNavigate={onNavigate}
+              />
+            ) : (
+              <SectionGroup
+                key={child.id}
+                node={child}
+                currentHref={currentHref}
+                expanded={expanded}
+                onToggle={onToggle}
+                onNavigate={onNavigate}
+              />
+            ),
+          )}
         </div>
       )}
     </div>
@@ -96,13 +114,19 @@ function initialExpanded(
   nav: NavNode[],
   href: string,
 ): Record<string, boolean> {
-  return Object.fromEntries(
-    nav
-      .filter(
-        (n) => n.type === "section" && n.children.some((c) => c.href === href),
-      )
-      .map((n) => [n.id, true]),
-  );
+  const result: Record<string, boolean> = {};
+  function traverse(nodes: NavNode[]) {
+    for (const node of nodes) {
+      if (node.type === "section") {
+        if (hasActiveDescendant(node.children, href)) {
+          result[node.id] = true;
+        }
+        traverse(node.children);
+      }
+    }
+  }
+  traverse(nav);
+  return result;
 }
 
 export function Sidebar({ nav, currentHref: initialHref, onNavigate }: Props) {
@@ -148,8 +172,8 @@ export function Sidebar({ nav, currentHref: initialHref, onNavigate }: Props) {
             key={node.id}
             node={node}
             currentHref={currentHref}
-            expanded={!!expanded[node.id]}
-            onToggle={() => toggle(node.id)}
+            expanded={expanded}
+            onToggle={toggle}
             onNavigate={onNavigate}
           />
         ),
