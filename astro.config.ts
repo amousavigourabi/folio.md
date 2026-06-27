@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, statSync, readFileSync, writeFileSync } from "node:fs";
 import { defineConfig } from "astro/config";
 import { buildRedirects } from "./src/lib/buildRedirects";
 import folioConfig from "./folio.config";
@@ -38,6 +38,31 @@ function findMdFiles(dir: string): string[] {
   return found;
 }
 
+function stripHtmlComments(): import("astro").AstroIntegration {
+  return {
+    name: "strip-html-comments",
+    hooks: {
+      "astro:build:done": ({ dir, pages }) => {
+        const base = fileURLToPath(dir);
+        for (const { pathname } of pages) {
+          const candidates = [
+            path.join(base, pathname, "index.html"),
+            path.join(base, `${pathname.replace(/\/$/, "")}.html`),
+          ];
+          for (const file of candidates) {
+            if (existsSync(file)) {
+              const original = readFileSync(file, "utf-8");
+              const stripped = original.replace(/<!--[\s\S]*?-->/g, "");
+              if (stripped !== original) writeFileSync(file, stripped, "utf-8");
+              break;
+            }
+          }
+        }
+      },
+    },
+  };
+}
+
 function noPlainMdFiles(): import("astro").AstroIntegration {
   return {
     name: "no-plain-md-files",
@@ -62,6 +87,7 @@ export default defineConfig({
     ? path.join(process.env.FOLIO_ROOT, "public")
     : path.join(pkgDir, "public"),
   integrations: [
+    stripHtmlComments(),
     noPlainMdFiles(),
     react(),
     mdx(),
