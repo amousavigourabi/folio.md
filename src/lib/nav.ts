@@ -26,6 +26,12 @@ function toTitle(id: string) {
 
 export type Crumb = { label: string; href?: string };
 
+export function idToHref(id: string): string {
+  if (id === "index") return "/";
+  if (id.endsWith("/index")) return `/${id.slice(0, -6)}`;
+  return `/${id}`;
+}
+
 export function buildNavTree(
   entries: {
     id: string;
@@ -90,7 +96,7 @@ export function buildNavTree(
       );
     }
 
-    const href = entry.id === "index" ? "/" : `/${entry.id}`;
+    const href = idToHref(entry.id);
 
     if (isTopLevel) {
       nav.push({
@@ -108,6 +114,21 @@ export function buildNavTree(
         id: entry.id,
         icon: entry.data.icon,
       });
+    }
+  }
+
+  for (const [sectionKey, section] of sections) {
+    const indexIdx = section.children.findIndex(
+      (c) => c.id === `${sectionKey}/index`,
+    );
+    if (indexIdx === -1) {
+      throw new Error(
+        `[folio] Section "${sectionKey}" is missing an index page. Add "index.mdx" inside the "${sectionKey}/" folder.`,
+      );
+    }
+    if (indexIdx !== 0) {
+      const [indexPage] = section.children.splice(indexIdx, 1);
+      section.children.unshift(indexPage);
     }
   }
 
