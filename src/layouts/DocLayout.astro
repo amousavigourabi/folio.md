@@ -132,7 +132,7 @@ const htmlStyle = `--bg-light: ${bgLight}; --bg-dark: ${bgDark}; --scrim-light: 
     <meta name="description" content={pageDescription} />
     <meta name="robots" content={robots} />
     {author && <meta name="author" content={author} />}
-    <link rel="canonical" href={canonicalUrl} />
+    {!noIndex && <link rel="canonical" href={canonicalUrl} />}
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="alternate" type="application/atom+xml" title={config.name} href="/feed.xml" />
     {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
