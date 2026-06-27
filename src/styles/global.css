@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Class-based dark mode — toggled by adding .dark to <html> */
+/* Class-based dark mode, toggled by adding .dark to <html> */
 @variant dark (&:where(.dark, .dark *));
 
 html {
@@ -12,17 +12,17 @@ html {
   --scroll-offset: 7rem;
 }
 
-/* Scroll anchor clearance — accounts for the sticky header */
+/* Scroll anchor clearance (accounts for the sticky header) */
 @utility scroll-clearance {
   scroll-margin-top: var(--scroll-offset);
 }
 
-/* Sticky sidebar column — shared layout for the left nav and right ToC asides */
+/* Sticky sidebar column, shared layout for the left nav and right ToC asides */
 @utility aside-col {
   @apply w-72 shrink-0 self-start sticky top-24;
 }
 
-/* Shared panel surface — glass card used for sidebar, main content, and ToC */
+/* Shared panel surface (glass card) used for sidebar, main content, and ToC */
 @utility panel {
   @apply rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md
          border border-white/80 dark:border-white/5;
@@ -32,7 +32,7 @@ html {
   }
 }
 
-/* Site title link hover colour — follows --accent-h */
+/* Site title link hover colour, follows --accent-h */
 @utility site-title-hover {
   &:hover {
     color: oklch(43% 0.2 var(--accent-h));
@@ -42,7 +42,7 @@ html {
   }
 }
 
-/* Cookie banner accept button — follows --accent-h */
+/* Cookie banner accept button, follows --accent-h */
 @utility cookie-accept-btn {
   background-color: oklch(56% 0.22 var(--accent-h));
   color: white;
@@ -51,7 +51,7 @@ html {
   }
 }
 
-/* Icon button — muted icon with hover reveal */
+/* Icon button: muted icon with hover reveal */
 @utility icon-btn {
   @apply flex items-center justify-center p-2 rounded-md text-neutral-500 hover:text-neutral-900 hover:bg-black/5
          dark:text-neutral-400 dark:hover:text-neutral-100 dark:hover:bg-white/10
@@ -103,7 +103,7 @@ html {
   }
 }
 
-/* Sidebar section chevron — rotates when the parent button is expanded */
+/* Sidebar section chevron, rotates when the parent button is expanded */
 @utility nav-chevron {
   @apply w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500 transition-transform;
   [aria-expanded="true"] & {
@@ -111,7 +111,7 @@ html {
   }
 }
 
-/* MDX prose components — class form (MDX files) + descendant form (.md files) */
+/* MDX prose components: class form (MDX files) + descendant form (.md files) */
 .mdx-a,
 .mdx-content a:not(.mdx-heading-anchor) {
   @apply text-blue-600 dark:text-blue-400 underline underline-offset-4
@@ -291,7 +291,7 @@ html {
   @apply hidden justify-center dark:flex;
 }
 
-/* Mermaid enlarge button — revealed on hover */
+/* Mermaid enlarge button, revealed on hover */
 .mermaid-zoom-btn {
   @apply absolute top-2 right-2 z-10 flex items-center justify-center
          size-7 rounded-md border-0 cursor-pointer
@@ -354,7 +354,7 @@ html.dark {
   background: linear-gradient(to bottom, var(--scrim-start), transparent);
 }
 
-/* Callout blocks — :::note / :::tip / :::warning / :::danger */
+/* Callout blocks: :::note / :::tip / :::warning / :::danger */
 aside[data-callout] {
   @apply my-5 px-4 py-3 rounded-lg border-l-4 text-sm
          text-neutral-700 dark:text-neutral-300;
@@ -395,7 +395,7 @@ aside[data-callout="danger"] {
   }
 }
 
-/* Code blocks — rehype-pretty-code figures with injected header and copy button */
+/* Code blocks: rehype-pretty-code figures with injected header and copy button */
 figure[data-rehype-pretty-code-figure] {
   @apply my-6 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 text-sm
          shadow-[0_1px_4px_rgb(0_0_0/0.06)] dark:shadow-[0_1px_4px_rgb(0_0_0/0.3)];

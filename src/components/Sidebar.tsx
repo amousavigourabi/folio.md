@@ -1,6 +1,6 @@
 import type { NavNode, NavPage, NavSection } from "@/lib/nav";
 import { useEventListener } from "@/lib/useEventListener";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { NavIcon } from "./NavIcon";
 
 interface Props {
@@ -106,29 +106,28 @@ function initialExpanded(
 }
 
 export function Sidebar({ nav, currentHref: initialHref, onNavigate }: Props) {
-  // Read window.location.pathname at hydration time so a swap that fired before
-  // client:idle hydration doesn't leave us pointing at the wrong page.
-  // Strip any trailing slash (e.g. /guide/page/) to match the nav hrefs.
-  const [currentHref, setCurrentHref] = useState(() =>
-    typeof window !== "undefined"
-      ? normalizePathname(window.location.pathname)
-      : (initialHref ?? "/"),
+  // Initialize from the server-provided href to match SSR output, then sync
+  // to the real URL after mount to handle any Astro swap that fired before
+  // client:idle hydration.
+  const [currentHref, setCurrentHref] = useState(
+    normalizePathname(initialHref ?? "/"),
   );
 
   const syncHref = useCallback(
     () => setCurrentHref(normalizePathname(window.location.pathname)),
     [],
   );
+
+  useEffect(() => {
+    syncHref();
+  }, [syncHref]);
+
   const doc = typeof document !== "undefined" ? document : null;
   useEventListener(doc, "astro:after-swap", syncHref);
 
-  const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
-    const href =
-      typeof window !== "undefined"
-        ? normalizePathname(window.location.pathname)
-        : (initialHref ?? "/");
-    return initialExpanded(nav, href);
-  });
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
+    initialExpanded(nav, normalizePathname(initialHref ?? "/")),
+  );
 
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
