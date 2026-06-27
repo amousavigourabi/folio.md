@@ -2,7 +2,7 @@ import config from "@root/folio.config";
 import type { APIRoute } from "astro";
 import { getDocs, isIndexablePage } from "@/lib/docs";
 import { buildGitDateMap } from "@/lib/gitDates";
-import { slugifyId } from "@/lib/slugify";
+import { idToHref } from "@/lib/nav";
 
 export const prerender = true;
 
@@ -12,8 +12,7 @@ export const GET: APIRoute = async () => {
   const gitDates = buildGitDateMap(config.contentDir);
 
   const urls = docs.filter(isIndexablePage).map((doc) => {
-    const slug = slugifyId(doc.id);
-    const path = slug === "index" ? "/" : `/${slug}`;
+    const path = idToHref(doc.id);
     const modified = gitDates.get(doc.id)?.modified;
     const lastmod = modified
       ? `\n    <lastmod>${modified.toISOString().slice(0, 10)}</lastmod>`

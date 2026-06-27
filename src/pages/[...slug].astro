@@ -7,7 +7,12 @@ import DocLayout from "@/layouts/DocLayout.astro";
 import { getDocs, isContentPage } from "@/lib/docs";
 import { buildGitDateMap } from "@/lib/gitDates";
 import type { Crumb, NavNode, NavPage } from "@/lib/nav";
-import { buildBreadcrumbMap, buildNavTree, buildPageList } from "@/lib/nav";
+import {
+  buildBreadcrumbMap,
+  buildNavTree,
+  buildPageList,
+  idToHref,
+} from "@/lib/nav";
 import { calcReadingTime } from "@/lib/readingTime";
 
 export async function getStaticPaths() {
@@ -19,7 +24,7 @@ export async function getStaticPaths() {
   const breadcrumbMap = buildBreadcrumbMap(nav);
   const pageList = buildPageList(nav);
   return pages.map((entry) => {
-    const currentHref = entry.id === "index" ? "/" : `/${entry.id}`;
+    const currentHref = idToHref(entry.id);
     const pageIndex = pageList.findIndex((p) => p.href === currentHref);
     const prev = pageIndex > 0 ? pageList[pageIndex - 1] : null;
     const next =
@@ -32,7 +37,7 @@ export async function getStaticPaths() {
         ? `${config.editLink.base.replace(/\/$/, "")}/${originalPath}`
         : undefined;
     return {
-      params: { slug: entry.id === "index" ? undefined : entry.id },
+      params: { slug: entry.id === "index" ? undefined : currentHref.slice(1) },
       props: {
         entry,
         nav,
