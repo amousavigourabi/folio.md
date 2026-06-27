@@ -10,8 +10,9 @@ export function Heading({
   ...props
 }: Props) {
   const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  const styleLevel = Math.max(1, level - 1);
   return (
-    <Tag id={id} className={`group mdx-heading mdx-h${level}`} {...props}>
+    <Tag id={id} className={`group mdx-heading mdx-h${styleLevel}`} {...props}>
       {children}
     </Tag>
   );

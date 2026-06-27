@@ -184,40 +184,32 @@ html {
 }
 
 /* MDX headings */
-.mdx-heading,
-.mdx-content :is(h1, h2, h3, h4, h5, h6) {
-  @apply relative scroll-clearance;
+.mdx-heading {
+  @apply relative scroll-clearance text-neutral-900 dark:text-neutral-100;
 }
-.mdx-heading::before,
-.mdx-content :is(h1, h2, h3, h4, h5, h6)::before {
+.mdx-heading::before {
   content: "";
   @apply absolute -left-8 top-0 w-8 h-full max-lg:hidden;
 }
 .mdx-page-title {
   @apply text-5xl font-extrabold tracking-tight mb-6 text-neutral-900 dark:text-neutral-100;
 }
-.mdx-h1,
-.mdx-content h1 {
-  @apply text-4xl font-bold tracking-tight mt-8 mb-4 text-neutral-900 dark:text-neutral-100;
+.mdx-h1 {
+  @apply text-4xl font-bold tracking-tight mt-8 mb-4;
 }
-.mdx-h2,
-.mdx-content h2 {
-  @apply text-3xl font-semibold tracking-tight mt-8 mb-3 text-neutral-900 dark:text-neutral-100;
+.mdx-h2 {
+  @apply text-3xl font-semibold tracking-tight mt-8 mb-3;
 }
-.mdx-h3,
-.mdx-content h3 {
-  @apply text-2xl font-semibold mt-6 mb-2 text-neutral-900 dark:text-neutral-100;
+.mdx-h3 {
+  @apply text-2xl font-semibold mt-6 mb-2;
 }
-.mdx-h4,
-.mdx-content h4 {
-  @apply text-xl font-medium mt-4 mb-2 text-neutral-900 dark:text-neutral-100;
+.mdx-h4 {
+  @apply text-xl font-medium mt-4 mb-2;
 }
-.mdx-h5,
-.mdx-content h5 {
-  @apply text-lg font-medium mt-4 mb-1 text-neutral-900 dark:text-neutral-100;
+.mdx-h5 {
+  @apply text-lg font-medium mt-4 mb-1;
 }
-.mdx-h6,
-.mdx-content h6 {
+.mdx-h6 {
   @apply text-base font-medium mt-3 mb-1 text-neutral-500 dark:text-neutral-400;
 }
 .mdx-heading-anchor {
