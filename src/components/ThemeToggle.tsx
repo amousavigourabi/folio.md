@@ -1,14 +1,14 @@
 import { useEventListener } from "@/lib/useEventListener";
 import { Moon, Sun } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  // Initial state: read the class already set by the inline theme-init script in DocLayout.
-  const [dark, setDark] = useState(
-    () =>
-      typeof document !== "undefined" &&
-      document.documentElement.classList.contains("dark"),
-  );
+  // Start false to match server render; sync to real DOM state after mount.
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    setDark(document.documentElement.classList.contains("dark"));
+  }, []);
 
   // Re-sync after Astro page swaps in case the component is not transition:persist'd.
   const sync = useCallback(
@@ -28,16 +28,15 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggle}
+      suppressHydrationWarning
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={dark}
       type="button"
       className="cursor-pointer icon-btn"
     >
-      {dark ? (
-        <Sun aria-hidden="true" className="w-5 h-5" />
-      ) : (
-        <Moon aria-hidden="true" className="w-5 h-5" />
-      )}
+      {/* CSS drives visibility so the inline theme script's class takes effect before React hydrates - no flash */}
+      <Moon aria-hidden="true" className="w-5 h-5 dark:hidden" />
+      <Sun aria-hidden="true" className="w-5 h-5 hidden dark:block" />
     </button>
   );
 }
