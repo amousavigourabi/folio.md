@@ -91,7 +91,7 @@ const ogImageUrl = `${siteBase}/og/${autoOgSlug}.png`;
 
 const schemas = [
   websiteSchema(config),
-  ...(currentHref !== "/" && !noIndex
+  ...(!noIndex
     ? [
         articleSchema({
           title,
