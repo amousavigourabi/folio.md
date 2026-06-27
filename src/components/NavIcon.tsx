@@ -1,4 +1,4 @@
-import type { IconName } from "@/lib/iconNames";
+import type { LucideProps } from "lucide-react";
 import {
   Book,
   BookOpen,
@@ -19,11 +19,11 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import type { LucideProps } from "lucide-react";
 import type { ComponentType } from "react";
+import type { IconName } from "@/lib/iconNames";
 
-export type { IconName };
 export { iconNames } from "@/lib/iconNames";
+export type { IconName };
 
 const icons: Record<IconName, ComponentType<LucideProps>> = {
   Book,

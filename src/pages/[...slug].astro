@@ -1,14 +1,14 @@
 ---
-import path from "node:path";
 import { render } from "astro:content";
+import path from "node:path";
+import config from "@root/folio.config";
 import { mdxComponents } from "@/components/mdx/index";
 import DocLayout from "@/layouts/DocLayout.astro";
 import { getDocs, isContentPage } from "@/lib/docs";
 import { buildGitDateMap } from "@/lib/gitDates";
-import { buildBreadcrumbMap, buildNavTree, buildPageList } from "@/lib/nav";
 import type { Crumb, NavNode, NavPage } from "@/lib/nav";
+import { buildBreadcrumbMap, buildNavTree, buildPageList } from "@/lib/nav";
 import { calcReadingTime } from "@/lib/readingTime";
-import config from "@root/folio.config";
 
 export async function getStaticPaths() {
   const allDocs = await getDocs();

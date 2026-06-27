@@ -1,6 +1,6 @@
+import { useCallback, useEffect, useState } from "react";
 import type { NavNode, NavPage, NavSection } from "@/lib/nav";
 import { useEventListener } from "@/lib/useEventListener";
-import { useCallback, useEffect, useState } from "react";
 import { NavIcon } from "./NavIcon";
 
 interface Props {

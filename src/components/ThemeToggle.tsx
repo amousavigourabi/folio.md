@@ -1,6 +1,6 @@
-import { useEventListener } from "@/lib/useEventListener";
 import { Moon, Sun } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useEventListener } from "@/lib/useEventListener";
 
 export function ThemeToggle() {
   // Start false to match server render; sync to real DOM state after mount.

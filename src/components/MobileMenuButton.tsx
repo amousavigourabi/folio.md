@@ -1,8 +1,8 @@
+import { Menu, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { NavNode } from "@/lib/nav";
 import { useEventListener } from "@/lib/useEventListener";
 import { useScrollLock } from "@/lib/useScrollLock";
-import { Menu, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { Sidebar } from "./Sidebar";
 
 interface Props {
@@ -52,7 +52,7 @@ export function MobileMenuButton({
       </button>
 
       {/* Backdrop: keyboard users rely on the Escape handler to close the drawer */}
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: decorative backdrop; Escape key closes the drawer */}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents lint/a11y/noStaticElementInteractions: decorative backdrop; Escape key closes the drawer */}
       <div
         onClick={() => setOpen(false)}
         className={`fixed inset-0 z-30 bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${

@@ -1,5 +1,5 @@
-import type { Heading } from "@/lib/nav";
 import { useEffect, useState } from "react";
+import type { Heading } from "@/lib/nav";
 
 interface Props {
   headings: Heading[];

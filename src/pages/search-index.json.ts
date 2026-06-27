@@ -1,5 +1,5 @@
-import { getDocs, isContentPage } from "@/lib/docs";
 import type { APIRoute } from "astro";
+import { getDocs, isContentPage } from "@/lib/docs";
 
 export const prerender = true;
 

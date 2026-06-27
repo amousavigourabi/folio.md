@@ -1,8 +1,8 @@
 ---
+import { ArrowLeft, Bug } from "lucide-react";
 import DocLayout from "@/layouts/DocLayout.astro";
 import { getDocs } from "@/lib/docs";
 import { buildNavTree } from "@/lib/nav";
-import { ArrowLeft, Bug } from "lucide-react";
 
 const nav = buildNavTree(await getDocs());
 ---

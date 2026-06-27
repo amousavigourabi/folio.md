@@ -1,6 +1,6 @@
-import { buildRobotsTxt } from "@/lib/buildRobotsTxt";
 import config from "@root/folio.config";
 import type { APIRoute } from "astro";
+import { buildRobotsTxt } from "@/lib/buildRobotsTxt";
 
 export const prerender = true;
 

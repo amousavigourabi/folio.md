@@ -1,8 +1,8 @@
+import config from "@root/folio.config";
+import type { APIRoute } from "astro";
 import { getDocs, isIndexablePage } from "@/lib/docs";
 import { buildGitDateMap } from "@/lib/gitDates";
 import { slugifyId } from "@/lib/slugify";
-import config from "@root/folio.config";
-import type { APIRoute } from "astro";
 
 export const prerender = true;
 

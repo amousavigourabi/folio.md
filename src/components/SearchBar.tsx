@@ -1,7 +1,7 @@
-import { useEventListener } from "@/lib/useEventListener";
 import Fuse from "fuse.js";
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useEventListener } from "@/lib/useEventListener";
 
 interface SearchEntry {
   slug: string;

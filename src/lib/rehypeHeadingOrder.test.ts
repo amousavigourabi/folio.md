@@ -1,4 +1,4 @@
-import type { Element, Root } from "hast";
+import type { Root } from "hast";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import rehypeHeadingOrder from "./rehypeHeadingOrder";
 

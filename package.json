@@ -37,10 +37,10 @@
     "astro": "^6.4.6",
     "fuse.js": "^7.4.2",
     "hast-util-to-string": "^3.0.1",
-    "lucide-react": "^1.18.0",
+    "lucide-react": "^1.21.0",
     "playwright": "^1.61.1",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-mermaid": "^3.0.0",
     "rehype-pretty-code": "^0.14.3",
@@ -51,8 +51,7 @@
     "shiki": "^4.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.0",
-    "@tailwindcss/postcss": "^4",
+    "@biomejs/biome": "^2.5.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

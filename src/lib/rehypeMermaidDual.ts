@@ -1,7 +1,7 @@
 import type { Element, ElementContent, Properties, Root } from "hast";
 import rehypeMermaid from "rehype-mermaid";
-import { unified } from "unified";
 import type { Plugin } from "unified";
+import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
 function h(
