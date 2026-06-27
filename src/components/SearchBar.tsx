@@ -140,7 +140,10 @@ export function SearchBar() {
       ref={containerRef}
       className="relative w-72 sm:w-[28rem] max-sm:w-auto max-sm:flex-1 max-sm:mx-3"
     >
-      <label className="flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-900 border border-neutral-200 dark:border-neutral-700 shadow-sm px-4 h-12 cursor-text">
+      <label
+        htmlFor="site-search"
+        className="flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-900 border border-neutral-200 dark:border-neutral-700 shadow-sm px-4 h-12 cursor-text"
+      >
         <span className="sr-only">Search</span>
         <Search
           aria-hidden="true"
@@ -148,6 +151,8 @@ export function SearchBar() {
         />
         <input
           ref={inputRef}
+          id="site-search"
+          name="q"
           role="combobox"
           type="search"
           value={query}
