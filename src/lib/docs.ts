@@ -1,5 +1,5 @@
-import path from "node:path";
 import { getCollection } from "astro:content";
+import path from "node:path";
 import config from "@root/folio.config";
 import { SECTION_SENTINEL } from "./nav";
 import { slugifyIdOrdered } from "./slugify";

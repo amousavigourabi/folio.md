@@ -1,7 +1,7 @@
-import { getDocs, isContentPage } from "@/lib/docs";
-import { generateOgImage } from "@/lib/generateOgImage";
 import config from "@root/folio.config";
 import type { APIRoute } from "astro";
+import { getDocs, isContentPage } from "@/lib/docs";
+import { generateOgImage } from "@/lib/generateOgImage";
 
 export const prerender = true;
 

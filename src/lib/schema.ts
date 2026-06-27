@@ -1,5 +1,5 @@
-import type { Crumb } from "@/lib/nav";
 import type { FolioConfig } from "@root/folio.config";
+import type { Crumb } from "@/lib/nav";
 
 export function websiteSchema(config: FolioConfig) {
   return {

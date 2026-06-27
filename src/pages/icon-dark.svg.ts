@@ -1,6 +1,6 @@
-import { generateIconSvg } from "@/lib/generateIconSvg";
 import config from "@root/folio.config";
 import type { APIRoute } from "astro";
+import { generateIconSvg } from "@/lib/generateIconSvg";
 
 export const prerender = true;
 

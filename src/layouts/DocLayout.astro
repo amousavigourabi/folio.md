@@ -1,20 +1,20 @@
 ---
 import "@/styles/global.css";
+import config from "@root/folio.config";
+import ClientRouter from "astro/components/ClientRouter.astro";
+import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
 import AsidePanel from "@/components/AsidePanel.astro";
 import { CookieBanner } from "@/components/CookieBanner";
 import CopyCodeButton from "@/components/CopyCodeButton.astro";
 import MermaidZoom from "@/components/MermaidZoom.astro";
 import { MobileMenuButton } from "@/components/MobileMenuButton";
-import { type IconName, NavIcon, iconNames } from "@/components/NavIcon";
+import { type IconName, iconNames, NavIcon } from "@/components/NavIcon";
 import { SearchBar } from "@/components/SearchBar";
 import { Sidebar } from "@/components/Sidebar";
 import { TableOfContents } from "@/components/TableOfContents";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Crumb, Heading, NavNode, NavPage } from "@/lib/nav";
 import { articleSchema, breadcrumbSchema, websiteSchema } from "@/lib/schema";
-import config from "@root/folio.config";
-import ClientRouter from "astro/components/ClientRouter.astro";
-import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
 
 interface Props {
   title: string;
