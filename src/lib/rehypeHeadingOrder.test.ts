@@ -5,12 +5,21 @@ import rehypeHeadingOrder from "./rehypeHeadingOrder";
 function makeTree(...levels: number[]): Root {
   return {
     type: "root",
-    children: levels.map((level) => ({
-      type: "element" as const,
-      tagName: `h${level}`,
-      properties: {},
-      children: [{ type: "text" as const, value: `Heading ${level}` }],
-    })),
+    children: levels.map((level, i) => {
+      const line = 1 + i * 2;
+      const text = `Heading ${level}`;
+      const endCol = level + 1 + text.length + 1; // "#{level} {text}"
+      return {
+        type: "element" as const,
+        tagName: `h${level}`,
+        properties: {},
+        children: [{ type: "text" as const, value: text }],
+        position: {
+          start: { line, column: 1, offset: i * 20 },
+          end: { line, column: endCol, offset: i * 20 + endCol - 1 },
+        },
+      };
+    }),
   };
 }
 
@@ -24,8 +33,8 @@ describe("rehypeHeadingOrder", () => {
   beforeEach(() => vi.spyOn(console, "warn").mockImplementation(() => {}));
   afterEach(() => vi.restoreAllMocks());
 
-  it("emits no warning for a well-ordered sequence", () => {
-    run(makeTree(1, 2, 3, 4, 5, 6));
+  it("emits no warning for a well-ordered shallow sequence", () => {
+    run(makeTree(1, 2, 3));
     expect(console.warn).not.toHaveBeenCalled();
   });
 
@@ -43,53 +52,22 @@ describe("rehypeHeadingOrder", () => {
     run(makeTree(2));
     expect(console.warn).toHaveBeenCalledOnce();
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining("document start"),
+      `[folio] docs/test.mdx:1: heading level skipped, "Heading 2" is h2 but previous was document start.`,
     );
-    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining("h2"));
   });
 
   it("warns when jumping from h1 to h3", () => {
     run(makeTree(1, 3));
     expect(console.warn).toHaveBeenCalledOnce();
-    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining("h1"));
-    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining("h3"));
+    expect(console.warn).toHaveBeenCalledWith(
+      `[folio] docs/test.mdx:3: heading level skipped, "Heading 3" is h3 but previous was h1.`,
+    );
   });
 
   it("warns for multiple independent skips", () => {
-    // h1 → h3 (skip), h3 → h2 (ok, going up), h2 → h4 (skip)
+    // h1 → h3 (skip), h3 → h2 (ok), h2 → h4 (skip + depth warning)
     run(makeTree(1, 3, 2, 4));
-    expect(console.warn).toHaveBeenCalledTimes(2);
-  });
-
-  it("includes the file path in the warning", () => {
-    run(makeTree(1, 3));
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining("docs/test.mdx"),
-    );
-  });
-
-  it("includes the heading text in the warning", () => {
-    const tree: Root = {
-      type: "root",
-      children: [
-        {
-          type: "element",
-          tagName: "h1",
-          properties: {},
-          children: [{ type: "text", value: "Introduction" }],
-        },
-        {
-          type: "element",
-          tagName: "h3",
-          properties: {},
-          children: [{ type: "text", value: "Deep Section" }],
-        },
-      ],
-    };
-    run(tree);
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining("Deep Section"),
-    );
+    expect(console.warn).toHaveBeenCalledTimes(3);
   });
 
   it("ignores non-heading elements", () => {
@@ -104,6 +82,23 @@ describe("rehypeHeadingOrder", () => {
     };
     run(tree);
     expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it("warns for h4 as deeply nested", () => {
+    run(makeTree(1, 2, 3, 4));
+    expect(console.warn).toHaveBeenCalledWith(
+      `[folio] docs/test.mdx:7: deeply nested heading, "Heading 4" is #### (h4). Consider restructuring this section.`,
+    );
+  });
+
+  it("warns for h5 as deeply nested", () => {
+    run(makeTree(1, 2, 3, 4, 5));
+    expect(console.warn).toHaveBeenCalledWith(
+      `[folio] docs/test.mdx:7: deeply nested heading, "Heading 4" is #### (h4). Consider restructuring this section.`,
+    );
+    expect(console.warn).toHaveBeenCalledWith(
+      `[folio] docs/test.mdx:9: deeply nested heading, "Heading 5" is ##### (h5). Consider restructuring this section.`,
+    );
   });
 
   it("truncates long heading text to 60 characters in the warning", () => {

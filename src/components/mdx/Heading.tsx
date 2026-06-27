@@ -25,3 +25,9 @@ export const H3 = (p: HeadingProps) => <Heading level={3} {...p} />;
 export const H4 = (p: HeadingProps) => <Heading level={4} {...p} />;
 export const H5 = (p: HeadingProps) => <Heading level={5} {...p} />;
 export const H6 = (p: HeadingProps) => <Heading level={6} {...p} />;
+
+export function H6Error(_p: HeadingProps): never {
+  throw new Error(
+    "[folio] ###### (h6) headings are not supported. Use at most ##### (h5).",
+  );
+}
