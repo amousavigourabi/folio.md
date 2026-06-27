@@ -191,7 +191,7 @@ html {
 .mdx-heading::before,
 .mdx-content :is(h1, h2, h3, h4, h5, h6)::before {
   content: "";
-  @apply absolute -left-8 top-0 w-8 h-full max-sm:hidden;
+  @apply absolute -left-8 top-0 w-8 h-full max-lg:hidden;
 }
 .mdx-page-title {
   @apply text-5xl font-extrabold tracking-tight mb-6 text-neutral-900 dark:text-neutral-100;
@@ -225,7 +225,7 @@ html {
          opacity-0 transition-opacity
          text-3xl text-neutral-400 dark:text-neutral-600
          font-normal no-underline select-none leading-none
-         max-sm:hidden;
+         max-lg:hidden;
 }
 .mdx-heading-anchor::before {
   content: "#";
