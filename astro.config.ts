@@ -57,6 +57,7 @@ function noPlainMdFiles(): import("astro").AstroIntegration {
 export default defineConfig({
   redirects: buildRedirects(contentDir),
   outDir: "./dist",
+  compressHTML: true,
   publicDir: process.env.FOLIO_ROOT
     ? path.join(process.env.FOLIO_ROOT, "public")
     : path.join(pkgDir, "public"),
