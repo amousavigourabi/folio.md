@@ -149,9 +149,11 @@ html {
 /* MDX table */
 .mdx-table-wrap {
   @apply overflow-x-auto my-6 rounded-xl border border-neutral-200 dark:border-neutral-700;
+  overscroll-behavior-x: contain;
 }
 .mdx-content table:not(.mdx-table) {
   @apply block overflow-x-auto my-6 rounded-xl border border-neutral-200 dark:border-neutral-700 w-full border-collapse text-sm;
+  overscroll-behavior-x: contain;
 }
 .mdx-table,
 .mdx-content table {
