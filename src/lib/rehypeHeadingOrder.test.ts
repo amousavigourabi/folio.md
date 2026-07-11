@@ -23,10 +23,10 @@ function makeTree(...levels: number[]): Root {
   };
 }
 
-const fakeFile = { path: "docs/test.mdx" } as never;
+const fakeFile = { path: "docs/test.mdx" };
 
 function run(tree: Root): void {
-  rehypeHeadingOrder()(tree, fakeFile, () => {});
+  rehypeHeadingOrder()(tree, fakeFile);
 }
 
 describe("rehypeHeadingOrder", () => {

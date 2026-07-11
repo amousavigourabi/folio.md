@@ -1,3 +1,4 @@
+import type React from "react";
 import satori from "satori";
 import sharp from "sharp";
 
@@ -111,7 +112,7 @@ export async function generateOgImage(opts: OgOptions): Promise<Buffer> {
     },
   };
 
-  const svg = await satori(vnode, {
+  const svg = await satori(vnode as React.ReactNode, {
     width: WIDTH,
     height: HEIGHT,
     fonts: [

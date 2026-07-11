@@ -1,8 +1,7 @@
 import type { Element, Root } from "hast";
-import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
-const rehypeCodeLanguage: Plugin<[], Root> = () => (tree) => {
+const rehypeCodeLanguage = () => (tree: Root) => {
   visit(tree, "element", (node: Element) => {
     if (node.tagName !== "pre") return;
     const code = node.children.find(

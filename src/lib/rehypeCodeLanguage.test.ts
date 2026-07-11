@@ -2,8 +2,6 @@ import type { Element, Root } from "hast";
 import { describe, expect, it } from "vitest";
 import rehypeCodeLanguage from "./rehypeCodeLanguage";
 
-const fakeFile = {} as never;
-
 function makeBlock(className?: string): Root {
   const code: Element = {
     type: "element",
@@ -26,7 +24,7 @@ function getCodeClasses(tree: Root): string[] {
 }
 
 function run(tree: Root): void {
-  rehypeCodeLanguage()(tree, fakeFile, () => {});
+  rehypeCodeLanguage()(tree);
 }
 
 describe("rehypeCodeLanguage", () => {

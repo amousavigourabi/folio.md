@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { IconName } from "./iconNames";
+import type { NavPage } from "./nav";
 import { buildBreadcrumbMap, buildNavTree, buildPageList } from "./nav";
 
-const entry = (id: string, title: string, icon?: string) => ({
+const entry = (id: string, title: string, icon?: IconName) => ({
   id,
   sortKey: id,
-  data: { title, icon } as { title: string; icon?: string },
+  data: { title, icon },
 });
 
 describe("buildNavTree", () => {
@@ -98,9 +100,10 @@ describe("buildNavTree", () => {
     const section = nav[0];
     expect(section.type).toBe("section");
     if (section.type === "section") {
-      expect(section.children[0].href).toBe("/guide"); // index always first
-      expect(section.children[1].href).toBe("/guide/writing-content"); // 01 second
-      expect(section.children[2].href).toBe("/guide/configuration"); // 06 third
+      const navPageChildren = section.children as NavPage[];
+      expect(navPageChildren[0].href).toBe("/guide"); // index always first
+      expect(navPageChildren[1].href).toBe("/guide/writing-content"); // 01 second
+      expect(navPageChildren[2].href).toBe("/guide/configuration"); // 06 third
     }
   });
 });
