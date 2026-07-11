@@ -1,5 +1,6 @@
 import type { Root } from "mdast";
-import type { Plugin } from "unified";
+import type {} from "mdast-util-directive";
+import type {} from "mdast-util-to-hast";
 import { visit } from "unist-util-visit";
 
 // Supported callout types and their display labels
@@ -26,7 +27,7 @@ function isCalloutType(name: string): name is CalloutType {
  *   This is a note.
  *   :::
  */
-const remarkCallout: Plugin<[], Root> = () => (tree) => {
+const remarkCallout = () => (tree: Root) => {
   visit(tree, "containerDirective", (node) => {
     if (!isCalloutType(node.name)) return;
 

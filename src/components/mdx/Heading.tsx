@@ -2,17 +2,11 @@ import type { HTMLProps } from "./types";
 
 type Props = HTMLProps<"h1"> & { level: 1 | 2 | 3 | 4 | 5 | 6 };
 
-export function Heading({
-  level,
-  children,
-  id,
-  className: _cls,
-  ...props
-}: Props) {
+export function Heading({ level, children, id, ...props }: Props) {
   const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   const styleLevel = Math.max(1, level - 1);
   return (
-    <Tag id={id} className={`group mdx-heading mdx-h${styleLevel}`} {...props}>
+    <Tag id={id} {...props} className={`group mdx-heading mdx-h${styleLevel}`}>
       {children}
     </Tag>
   );

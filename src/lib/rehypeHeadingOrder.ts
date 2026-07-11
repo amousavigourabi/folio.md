@@ -1,11 +1,10 @@
 import type { Element, Root } from "hast";
 import { toString as hastToString } from "hast-util-to-string";
-import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
 const MAX_HEADINGS = 10;
 
-const rehypeHeadingOrder: Plugin<[], Root> = () => (tree, file) => {
+const rehypeHeadingOrder = () => (tree: Root, file: { path: string }) => {
   let prevLevel = 0;
   let count = 0;
   visit(tree, "element", (node: Element) => {

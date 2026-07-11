@@ -1,8 +1,8 @@
-import type { FolioConfig } from "@root/folio.config";
+import { defineFolioConfig } from "@root/folio.config";
 import { describe, expect, it } from "vitest";
 import { articleSchema, breadcrumbSchema, websiteSchema } from "./schema";
 
-const minConfig = {
+const minConfig = defineFolioConfig({
   name: "Test Site",
   description: "A test site.",
   contentDir: "./docs",
@@ -10,9 +10,9 @@ const minConfig = {
   siteUrl: "https://example.com",
   light: { enabled: true, gradient: { from: "#fff", to: "#eee" } },
   dark: { enabled: false, gradient: { from: "#000", to: "#111" } },
-  vale: { minErrorLevel: "error" as const },
+  vale: { minErrorLevel: "error" },
   pagination: true,
-} satisfies FolioConfig;
+});
 
 describe("websiteSchema", () => {
   it("includes url from siteUrl", () => {
@@ -42,6 +42,7 @@ describe("articleSchema", () => {
     const s = articleSchema({
       title: "T",
       siteName: "S",
+      siteUrl: "https://example.com",
       datePublished: created,
       lastEdited: modified,
     });
@@ -50,7 +51,12 @@ describe("articleSchema", () => {
   });
 
   it("emits author as Person node", () => {
-    const s = articleSchema({ title: "T", siteName: "S", author: "Alice" });
+    const s = articleSchema({
+      title: "T",
+      siteName: "S",
+      siteUrl: "https://example.com",
+      author: "Alice",
+    });
     expect(s.author).toEqual({ "@type": "Person", name: "Alice" });
   });
 });

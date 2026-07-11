@@ -103,7 +103,7 @@ const FolioConfigSchema = z.object({
         .default("error"),
       accept: z.array(z.string()).optional(),
     })
-    .default({}),
+    .default({ minErrorLevel: "error" }),
 });
 
 export type FolioConfig = z.infer<typeof FolioConfigSchema>;

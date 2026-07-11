@@ -1,8 +1,7 @@
 import type { Element, Root } from "hast";
-import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
-const rehypeHeadingClasses: Plugin<[], Root> = () => (tree) => {
+const rehypeHeadingClasses = () => (tree: Root) => {
   visit(tree, "element", (node: Element) => {
     const m = node.tagName.match(/^h([1-6])$/);
     if (!m) return;

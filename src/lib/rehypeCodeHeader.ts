@@ -1,6 +1,5 @@
 import type { Element, ElementContent, Node, Properties, Root } from "hast";
 import { toString as hastToString } from "hast-util-to-string";
-import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
 function h(
@@ -32,7 +31,7 @@ function isTitleFigcaption(node: Node): node is Element {
   );
 }
 
-const rehypeCodeHeader: Plugin<[], Root> = () => (tree) => {
+const rehypeCodeHeader = () => (tree: Root) => {
   visit(tree, "element", (node: Element) => {
     if (node.tagName !== "figure") return;
     const pre = node.children.find(
