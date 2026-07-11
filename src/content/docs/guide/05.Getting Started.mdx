@@ -62,7 +62,7 @@ Under the hood this runs `astro dev` inside the folio-md package directory, poin
 
 # Add content
 
-Drop `.mdx` files into your `contentDir`. Every file becomes a page. Nested folders become collapsible sidebar sections. Each file needs at minimum a `title` in its frontmatter:
+Drop `.mdx` files into your `contentDir`. Every file becomes a page. Nested folders become collapsible sidebar sections. Each file needs at minimum a `title`:
 
 ```mdx
 ---
@@ -73,7 +73,7 @@ description: How to install and run the project.
 Your content here.
 ```
 
-See [Writing Content](/guide/writing-content) for a full frontmatter reference, Mermaid diagrams, code blocks, and sidebar ordering.
+See [Writing Content](/guide/writing-content) for page settings, Mermaid diagrams, code blocks, and sidebar ordering.
 
 # Static assets
 
@@ -117,7 +117,7 @@ npm run folio:lint    # npm
 yarn folio:lint       # yarn
 ```
 
-Checks your content with [Vale](https://vale.sh) using the Vale and Google style sets. folio.md downloads both packages automatically on first run and caches them at `~/.folio-md/vale-styles/`. Install Vale separately before running:
+Checks your content with [Vale](https://vale.sh) using the Vale and Google style sets. The Vale styles ship with Vale itself. folio.md downloads the Google package automatically on first run and caches it at `~/.folio-md/vale-styles/`. Install Vale separately before running:
 
 ```bash
 brew install vale          # macOS / Linux (Homebrew)

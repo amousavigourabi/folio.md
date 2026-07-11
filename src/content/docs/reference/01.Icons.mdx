@@ -1,14 +1,14 @@
 ---
 title: Icon Reference
-description: All icon names available for the icon frontmatter field.
+description: All icon names you can use for the sidebar icon on your pages.
 ---
 
-The `icon` field in page frontmatter accepts any of the names below. folio.md shows icons in the sidebar in two places:
+Set `icon:` in your page settings to display an icon next to the page in the sidebar. folio.md shows icons in two places:
 
-- **Top-level pages**: the icon appears next to the page's sidebar entry.
-- **Top-level `_section.mdx` files**: the icon appears next to the section header.
+- **Top-level pages**: next to the page's sidebar entry.
+- **Section headers**: defined in `_section.mdx`, the icon appears next to the section title.
 
-Setting `icon` on a nested page inside a section passes schema validation but has no visible effect. folio.md emits a build warning in that case.
+Setting `icon` on a page nested inside a section has no visible effect. folio.md emits a build warning in that case.
 
 ```mdx
 ---

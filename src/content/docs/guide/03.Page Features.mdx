@@ -1,19 +1,20 @@
 ---
 title: Page Features
-description: Table of contents, heading anchors, reading time, last-updated dates, link validation, and the copy-code button.
+description: Table of contents, heading anchors, reading time, last-updated dates, link validation, copy-code button, and view transitions.
+keywords: [table of contents, heading anchors, reading time, last updated, link validation, copy code, view transitions]
 ---
 
 # Table of contents
 
-Every page with at least one `h1` or `h2` heading in its **body content** gets an auto-generated table of contents panel on the right side of the layout, on `xl` screens and wider. It lists those headings and highlights the one currently in view as you scroll. The auto-rendered page title doesn't count. Only headings written directly in the MDX file appear in the table of contents.
+Write at least one heading in your page body and folio.md adds a navigation panel on the right side of the layout automatically, visible on wide screens. It lists every `h1` and `h2` heading and highlights the section you're currently reading as you scroll.
 
-Headings deeper than `h2` are intentionally excluded to keep the ToC scannable.
+Headings deeper than `h2` are intentionally excluded to keep the panel scannable. The auto-rendered page title doesn't count toward the heading list.
 
 # Heading anchors
 
-Every heading gets a stable URL anchor derived from its text: lowercase, with spaces and underscores replaced by hyphens, and other punctuation stripped. The anchor appears as a `#` link prepended to the heading when you hover over it. Click it or share it to link directly to that section.
+Every heading gets a shareable anchor link, generated from the heading text. Hover over any heading to see the `#` icon, then click it to navigate or copy the URL to share a link directly to that section.
 
-Examples:
+Examples of how heading text becomes an anchor:
 
 | Heading text | Generated anchor |
 |---|---|
@@ -23,15 +24,15 @@ Examples:
 
 # Reading time
 
-folio.md calculates an estimated reading time for every page at build time and displays it below the page title, for example `3 minute read`. The estimate counts words in the page body, excluding code blocks and inline code, at 200 words per minute. The result is always at least 1 minute.
+folio.md adds an estimated reading time below every page title, for example `3 minutes read`, or `1 minute read` for short pages. The estimate counts words in the page body, excluding code blocks and inline code, at 200 words per minute.
 
-If the page also has an `author` set in frontmatter, the reading time appears on the same line separated by a dot.
+To show the author's name alongside the reading time, add `author:` to your page settings. The two items appear on the same line separated by a `·`.
 
 # Last updated date
 
-A "Last updated" line appears at the top-right of each page. folio.md reads the date from `git log` at build time, using the date of the most recent commit that touched that file. This requires a git repository with at least one commit.
+folio.md adds a "Last updated" date to every page automatically, reading it from your git history. It uses the date of the most recent commit that touched each file.
 
-folio.md locale-formats the date using the `seo.locale` value from `folio.config.ts`, defaulting to `en-US`. It omits the date when git history is unavailable, for example in a fresh clone with no commits or on a host that checks out without git history.
+folio.md formats the date using the `seo.locale` value from `folio.config.ts`, defaulting to `en-US`. It omits the date when git history isn't available, for example on a host that checks out without history.
 
 :::tip
 When deploying with GitHub Actions, pass `fetch-depth: 0` to `actions/checkout` so the full commit history is available. See [Deployment](/guide/deployment) for an example workflow.
@@ -39,44 +40,48 @@ When deploying with GitHub Actions, pass `fetch-depth: 0` to `actions/checkout` 
 
 # Link validation
 
-At build time, folio.md checks every `href` in your MDX files:
+folio.md checks every link in your pages at build time. If you rename or delete a page, the build reports exactly which links to update so you can't accidentally publish a dead link.
 
-| Link type | Behaviour |
+| Link type | Behavior |
 |---|---|
 | Internal path | **Error** if the target page doesn't exist. Build fails. |
 | Internal path with anchor | **Error** if the target page or heading doesn't exist. Build fails. |
-| Anchor-only link | **Error** if the heading doesn't exist on the **current** page. Build fails. |
+| Anchor-only link | **Error** if the heading doesn't exist on the current page. Build fails. |
 | External URL | **Warning** if the URL is unreachable. Build continues. |
 | `mailto:` link | Skipped, not checked |
 
-This makes it safe to rename or delete pages: you can't ship a dead link by accident.
+External links open in a new tab automatically and carry a screen-reader label `(opens in new tab)`.
 
-External links open in a new tab automatically and include a screen-reader label `(opens in new tab)`.
+## Redirect pages and link validation
 
-## Alias pages and link validation
+When a page uses the `alias:` setting to redirect to another page, folio.md validates the redirect target too. If the target doesn't exist, the build fails.
 
-When a page has `alias:` in its frontmatter, folio.md also validates the redirect target as an internal link. If the target doesn't exist, the build fails.
-
-If a redirect stub contains body content below its frontmatter, the link validator emits an `ALIAS [non-empty]` warning, because that body is never rendered:
+If a redirect page has body content below the settings block, the link validator emits an `ALIAS [non-empty]` warning, because that body never renders:
 
 ```
 ALIAS [non-empty] docs/old-page.mdx
       has alias → /new-page but also contains body content (body will never be rendered)
 ```
 
-If another page links to a redirect stub rather than to its destination, the link validator emits an `ALIAS` warning:
+If another page links to a redirect page rather than to its destination, the link validator emits an `ALIAS` warning:
 
 ```
 ALIAS [internal] /old-path → /new-path
       in docs/some-page.mdx (link to the destination directly)
 ```
 
-Linking to redirect stubs is an antipattern. Update those links to point to the destination directly.
+Linking to redirect pages instead of their destinations is an antipattern. Update those links to point to the destination directly.
 
-## How redirect stubs work
+## How redirects work
 
-At build time, folio.md scans every file's frontmatter for `alias:` and registers static Astro redirects. The web server or CDN handles the redirect with no JavaScript involved. folio.md excludes redirect stubs from navigation, search, and prev/next pagination.
+folio.md scans every page's settings for `alias:` at build time and registers static redirects. The server handles the redirect with no JavaScript involved. folio.md excludes redirect pages from navigation, search, and prev/next pagination.
 
 # Copy code button
 
-Every fenced code block gets a **Copy** button injected at build time. Clicking it copies the raw code to the clipboard without any syntax-highlighting markup and gives brief visual feedback that the copy succeeded.
+Every code block in your pages gets a **Copy** button automatically. Clicking it copies the raw code to the clipboard without any syntax-highlighting markup and gives brief visual feedback that the copy worked.
+
+# View transitions
+
+folio.md uses [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/) to animate navigation between pages. Clicking any internal link replaces only the changed parts of the page rather than doing a full reload, which makes navigation feel instant. The sidebar, navbar, and cookie banner persist across transitions without re-mounting.
+
+View transitions need no configuration and are active for all pages by default.

@@ -2,6 +2,8 @@ pre-commit:
   commands:
     check:
       run: bun run check
+    prose:
+      run: bun run prose
 
 pre-push:
   commands:
