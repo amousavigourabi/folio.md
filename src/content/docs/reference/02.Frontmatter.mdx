@@ -1,27 +1,29 @@
 ---
-title: Frontmatter Reference
-description: All frontmatter fields accepted by folio.md page files.
+title: Page Settings
+description: All options you can set per page to control its title, description, icon, visibility, and redirect behavior.
+keywords: [page settings, title, description, author, icon, noIndex, alias, keywords, frontmatter]
 ---
 
-Every `.mdx` file in your content directory can declare frontmatter between `---` delimiters. folio.md validates every field at build time and throws a descriptive error if the value is wrong.
+At the top of every `.mdx` file, between `---` delimiters, you can add settings that tell folio.md how to handle the page. folio.md validates every setting at build time and fails with a clear error if a value is wrong.
 
 ```mdx
 ---
 title: My Page
-description: A short description for search and meta tags.
+description: A short summary for search engines and social previews.
 ---
 ```
 
-# Fields
+The `title` field is the only required setting. Everything else is optional.
 
-## `title`
+## Title
 
 | | |
 |---|---|
+| Field | `title` |
 | Type | `string` |
 | Required | yes |
 
-The page title. Rendered as the `<h1>` at the top of the page when `showTitle` is `true`, used in the `<title>` tag as `{title} | {site name}`, and included in `og:title` and search results.
+Your page's name. It appears as the heading at the top of the page, in the browser tab as `{title} | {site name}`, in the sidebar, and in search engine results.
 
 ```mdx
 ---
@@ -29,14 +31,15 @@ title: Getting Started
 ---
 ```
 
-## `description`
+## Description
 
 | | |
 |---|---|
+| Field | `description` |
 | Type | `string` |
 | Default | site-level `description` from `folio.config.ts` |
 
-A short summary of the page. Used in `<meta name="description">`, `og:description`, and the search index. Falls back to the site-level `description` when omitted.
+A short summary of what the page covers. folio.md shows it in search engine snippets, social preview cards, and the site's full-text search results. If you omit it, folio.md falls back to the site-level description from `folio.config.ts`.
 
 ```mdx
 ---
@@ -45,14 +48,15 @@ description: Install folio.md and publish your first docs site.
 ---
 ```
 
-## `icon`
+## Sidebar icon
 
 | | |
 |---|---|
+| Field | `icon` |
 | Type | `IconName` |
 | Default | none |
 
-A [Lucide](https://lucide.dev) icon shown in the sidebar. Only visible for top-level pages and top-level `_section.mdx` files. Setting `icon` on a page nested inside a section passes schema validation but has no visible effect, and folio.md emits a build warning.
+An icon displayed next to the page's entry in the sidebar. Works only for top-level pages and section headers defined in `_section.mdx`. Setting an icon on a page nested inside a section has no visible effect, and folio.md emits a build warning.
 
 See the [Icon Reference](/reference/icons) for all accepted names.
 
@@ -63,14 +67,15 @@ icon: Rocket
 ---
 ```
 
-## `showTitle`
+## Show or hide the page heading
 
 | | |
 |---|---|
+| Field | `showTitle` |
 | Type | `boolean` |
 | Default | `true` |
 
-When `false`, folio.md suppresses the auto-rendered `<h1>` at the top of the page. Use this when you want to write your own title markup inside the MDX body, or on landing pages where the heading is part of a custom layout.
+By default, folio.md adds a heading at the top of every page using the `title` value. Set `showTitle: false` to hide it. This is useful for landing pages where you want to write your own heading layout in the page body.
 
 ```mdx
 ---
@@ -79,14 +84,15 @@ showTitle: false
 ---
 ```
 
-## `author`
+## Author
 
 | | |
 |---|---|
+| Field | `author` |
 | Type | `string` |
 | Default | none |
 
-The page author's name. Displayed below the page title alongside the reading time, separated by a dot. Also sets `<meta name="author">` and appears in JSON-LD `Article` structured data.
+The name of the person who wrote this page. It appears below the page heading alongside the reading time, separated by a `·`. folio.md also includes it in the page's metadata for search engines and in JSON-LD structured data.
 
 ```mdx
 ---
@@ -95,14 +101,15 @@ author: Alice
 ---
 ```
 
-## `keywords`
+## Keywords
 
 | | |
 |---|---|
+| Field | `keywords` |
 | Type | `string[]` |
 | Default | none |
 
-A list of keywords added to `<meta name="keywords">`. Not a strong ranking signal for modern search engines, but useful for internal tooling or site-search tuning.
+A list of keywords for the page. folio.md adds them to the page's metadata. Modern search engines don't rely on this field heavily, but it can help internal tooling and site-search tuning.
 
 ```mdx
 ---
@@ -111,14 +118,15 @@ keywords: [cache, CDN, performance]
 ---
 ```
 
-## `noIndex`
+## Exclude from search engines
 
 | | |
 |---|---|
+| Field | `noIndex` |
 | Type | `boolean` |
 | Default | `false` |
 
-When `true`, sets `<meta name="robots" content="noindex, nofollow">` and excludes the page from the sitemap and Atom feed. Use this for draft pages, internal-only content, or redirect stubs you don't want indexed.
+Prevents search engines from indexing this page and removes it from the sitemap and Atom feed. Use it for draft pages, internal content, or anything you don't want appearing in external search results.
 
 ```mdx
 ---
@@ -127,16 +135,17 @@ noIndex: true
 ---
 ```
 
-## `alias`
+## Redirect to another page
 
 | | |
 |---|---|
+| Field | `alias` |
 | Type | `string` |
 | Default | none |
 
-Turns the page into a redirect stub. Visiting this page's URL sends the browser to the `alias` value as a static server-side redirect, with no JavaScript involved. The value must be an internal path. folio.md rejects external URLs at build time.
+Redirects visitors from this page's URL to another page. The redirect happens at the server level with no JavaScript involved. Use this when you rename or move a page so that old links still work.
 
-folio.md excludes redirect stubs from the sidebar, search, and prev/next pagination. The stub file itself never renders as a page.
+folio.md excludes redirect stubs from the sidebar, search, and prev/next pagination.
 
 ```mdx
 ---
@@ -149,6 +158,6 @@ alias: /guide/new-page-title
 If another page links to a redirect stub instead of its destination, folio.md emits an `ALIAS` warning at build time. Update those links to point to the destination directly.
 :::
 
-:::warning
-If the alias file contains body content below the frontmatter, that content is silently discarded. The page is never rendered. folio.md emits an `ALIAS [non-empty]` warning at build time to catch this.
+:::danger
+If the alias file contains body content below the settings block, that content is silently discarded. The page is never rendered. folio.md emits an `ALIAS [non-empty]` warning at build time to catch this. Move any body content to the destination page before adding the `alias:` setting.
 :::

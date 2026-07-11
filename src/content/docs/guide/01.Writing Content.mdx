@@ -1,9 +1,10 @@
 ---
 title: Writing Content
-description: MDX features, diagrams, code blocks, frontmatter fields, and sidebar ordering.
+description: MDX features, diagrams, code blocks, page settings, and sidebar ordering.
+keywords: [MDX, Mermaid, callouts, syntax highlighting, page settings, task lists]
 ---
 
-Every page is a `.mdx` file. MDX is a superset of Markdown that can import and render React components, but all standard Markdown syntax works just fine when you don't need components.
+Every page is a `.mdx` file. MDX is a superset of Markdown that can import and render React components, but all standard Markdown syntax works just fine when you don't need components. Plain `.md` files aren't supported. folio.md fails the build with an error when it finds any in the content directory.
 
 # Markdown features
 
@@ -14,9 +15,15 @@ folio.md enables [GitHub Flavored Markdown](https://github.github.com/gfm/) via 
 - **Task lists**: `- [x] done` / `- [ ] todo`
 - **Autolinks**: bare URLs become links automatically
 
+:::tip
+folio.md warns at build time when heading levels skip, for example an `h3` that follows an `h1` without an intervening `h2`. It also warns when a page has more than 10 headings and suggests splitting the page.
+:::
+
 # Mermaid diagrams
 
 Wrap a Mermaid diagram in a fenced code block tagged `mermaid`. folio.md renders it to SVG at build time and ships no JavaScript to the browser. When you enable both light and dark modes, folio.md renders each diagram twice, once per theme, and uses CSS to show the correct version. Only the active theme's SVG is visible at any time.
+
+Each diagram also gets an **Enlarge** button. Clicking it opens the diagram in a full-screen modal where you can pan and zoom using a mouse or pointer gestures.
 
 ````mdx
 ```mermaid
@@ -42,10 +49,6 @@ console.log("hello");
 ```
 ````
 
-:::tip
-folio.md warns at build time when heading levels skip, for example an `h3` that follows an `h1` without an intervening `h2`. It also warns when a page has more than 10 headings and suggests splitting the page.
-:::
-
 # Callout blocks
 
 Use `:::type` containers to draw attention to important content. Four types are available: `note`, `tip`, `warning`, and `danger`.
@@ -70,11 +73,11 @@ folio.md strips numeric prefixes from file names to build the URL slug but uses 
 
 # Nested folders
 
-Folders inside the content directory become collapsible sidebar sections. folio.md derives the section label from the folder name, stripping numeric prefixes. Nesting deeper than 3 path segments emits a build warning.
+Folders inside the content directory become collapsible sidebar sections. folio.md derives the section label from the folder name, stripping numeric prefixes. Nesting pages more than 2 folders deep emits a build warning.
 
 ## Section metadata with `_section.mdx`
 
-Place a `_section.mdx` file directly inside a top-level folder to override the section's sidebar title and icon:
+Place a `_section.mdx` file inside a folder to override the section's sidebar title and icon:
 
 ```
 docs/
@@ -91,8 +94,21 @@ icon: Book
 ---
 ```
 
-`_section.mdx` never renders as a page. It must sit exactly one level deep. Placing it inside a sub-folder triggers a build warning and folio.md ignores it.
+`_section.mdx` never renders as a page. It works at one or two levels of nesting. Placing it three or more levels deep triggers a build warning and folio.md ignores it.
 
-# Frontmatter
+Every top-level folder must contain an `index.mdx` file, or the build fails with a clear error. That `index.mdx` is always sorted first in the section regardless of any numeric prefix.
 
-See the [Frontmatter Reference](/reference/frontmatter) for all supported fields with types, defaults, and examples.
+# Page settings
+
+At the top of every `.mdx` file, between `---` delimiters, you configure the page. The `title` field is the only required setting:
+
+```mdx
+---
+title: My Page
+description: A short summary for search engines and social previews.
+author: Alice
+icon: Rocket
+---
+```
+
+folio.md uses `title` as the page heading, browser tab title, and search result title. Set `description` to control the search snippet and social card preview. See [Page Settings](/reference/frontmatter) for the full list of options.

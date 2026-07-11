@@ -12,7 +12,7 @@ author: Atour Mousavi Gourabi
 - **Accessible by default**: semantic HTML, ARIA landmarks on every region, full keyboard navigation, and screen-reader labels on all interactive elements and external links, with no configuration required
 - **Google Analytics**: add your measurement ID to `folio.config.ts` and folio.md wires it up automatically
 - **GDPR-ready**: a cookie consent banner appears automatically when you configure analytics; events only fire after the visitor accepts. No third-party CMP needed.
-- **Sidebar navigation**: auto-generated from your file tree; nested folders become collapsible sections with optional `_section.md` metadata
+- **Sidebar navigation**: auto-generated from your file tree; nested folders become collapsible sections with optional `_section.mdx` metadata
 - **Full-text search**: client-side via [Fuse.js](https://www.fusejs.io), zero-latency, no external service
 - **Mermaid diagrams**: rendered to SVG at build time in light and dark variants, no JS payload at runtime
 - **Syntax highlighting**: via Shiki, with copy-to-clipboard on every block
@@ -20,16 +20,17 @@ author: Atour Mousavi Gourabi
 - **SEO-ready**: Open Graph, Twitter card, canonical URLs, robots meta, JSON-LD structured data
 - **MDX support**: every page is a `.mdx` file; pages can import and render React components
 - **Link validation**: folio.md checks internal links at build time and fails the build on broken links
-- **Page aliases**: redirect one URL to another with a single `alias:` frontmatter field
+- **Page aliases**: redirect one URL to another with a single `alias:` page setting
+- **View transitions**: client-side navigation with animated page transitions, no full reloads
 
 # Get started
 
 | Page | Description |
 |---|---|
-| [Getting Started](/guide/getting-started) | Install folio, scaffold your configuration, and write your first page |
+| [Getting Started](/guide/getting-started) | Install folio.md, scaffold your configuration, and write your first page |
 | [Configuration](/guide/configuration) | All `folio.config.ts` options |
-| [Writing Content](/guide/writing-content) | MDX, Mermaid, code blocks, frontmatter fields |
-| [Page Features](/guide/page-features) | ToC, heading anchors, last-updated dates, link validation |
+| [Writing Content](/guide/writing-content) | MDX, Mermaid, code blocks, page settings |
+| [Page Features](/guide/page-features) | ToC, reading time, heading anchors, last-updated dates, link validation, view transitions |
 | [SEO & Metadata](/guide/seo-metadata) | Page metadata, OG images, sitemap, structured data |
 | [Deployment](/guide/deployment) | Ship to GitHub Pages or GitLab Pages |
 | [Troubleshooting](/reference/troubleshooting) | Solutions to common build and configuration problems |

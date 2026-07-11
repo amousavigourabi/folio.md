@@ -1,6 +1,7 @@
 ---
 title: Configuration
 description: All folio.config.ts options documented with examples.
+keywords: [folio.config.ts, configuration, themes, analytics, SEO, Vale, navbar, footer]
 ---
 
 All site-level settings live in `folio.config.ts` at the repository root. Export a configuration built with `defineFolioConfig`:
@@ -26,7 +27,7 @@ export default defineFolioConfig({
 | `description` | string | required | Fallback meta description for pages without their own |
 | `contentDir` | string | `"./docs"` | Path to the MDX content directory, relative to the repository root |
 | `lang` | string | `"en"` | Value of the `<html lang>` attribute |
-| `siteUrl` | string | required | Canonical base URL for your site, used for canonical links and Open Graph URLs. Must start with `https://` or `http://`. |
+| `siteUrl` | string | required | Canonical base URL for your site, used for canonical links and Open Graph URLs. Must start with `http://` or `https://`. Using `http://` emits a startup warning. |
 
 ## Light theme
 
@@ -65,7 +66,7 @@ When both `light.enabled` and `dark.enabled` are `true`, a toggle button appears
 
 ```ts
 seo: {
-  locale:        "en_US",       // used in og:locale; underscores are normalized automatically
+  locale:        "en_US",       // used in og:locale; accepts underscores or hyphens (e.g. "en_US" or "en-US")
   robots:        "index, follow",
   twitterHandle: "myhandle",    // without the @
 }
@@ -147,7 +148,7 @@ Two style sets are active by default:
 - **Vale**: Vale's built-in rules covering grammar, spelling, and more
 - **Google**: Google's developer documentation style guide
 
-folio.md downloads both packages automatically on first run and caches them at `~/.folio-md/vale-styles/`, no setup required.
+The Vale styles ship with Vale itself. folio.md downloads the Google package automatically on first run and caches it at `~/.folio-md/vale-styles/`, no setup required.
 
 All issues at every level are always displayed. `minErrorLevel` controls only the exit code: `folio lint` returns a non-zero exit code if folio lint finds any issues that reach or exceed that level, making it suitable for CI. The default is `"error"`, so suggestions and warnings are visible but don't fail the build.
 
@@ -182,7 +183,7 @@ navbar: {
 },
 ```
 
-Extra icon buttons rendered in the navbar between the search bar and the theme toggle. The `icon` field accepts any name from the [Icons reference](/reference/icons). External links that start with `http` open in a new tab automatically. Omit `icon` to render the label as plain text.
+Extra icon buttons rendered in the navbar between the search bar and the theme toggle. The `icon` field accepts any name from the [Icon Reference](/reference/icons). External links that start with `http` open in a new tab automatically. Omit `icon` to render the label as plain text.
 
 # Full example
 

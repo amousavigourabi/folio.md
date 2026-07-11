@@ -18,6 +18,11 @@ bun run dev
 
 The dev server starts at `http://localhost:4321` and hot-reloads on every file save.
 
+`bun install` also installs [Lefthook](https://github.com/evilmartians/lefthook) git hooks automatically. Two hooks are active:
+
+- **pre-commit**: runs `bun run check` before every commit, which covers linting and TypeScript type checking
+- **pre-push**: runs `bun run test` before every push, so test failures don't reach the remote
+
 # Code style
 
 folio.md uses [Biome](https://biomejs.dev) for linting and formatting. Run it before pushing:
@@ -25,6 +30,7 @@ folio.md uses [Biome](https://biomejs.dev) for linting and formatting. Run it be
 ```bash
 bun run lint        # check
 bun run lint:fix    # auto-fix
+bun run check       # lint + TypeScript type check together
 ```
 
 Key conventions Biome enforces:
@@ -38,15 +44,15 @@ TypeScript uses `strict` mode from `astro/tsconfigs/strict`. Avoid `any`. Prefer
 
 # Before opening a pull request
 
-1. **Run the linter**: `bun run lint`
-2. **Run the tests**: `bun run test`, using [Vitest](https://vitest.dev)
-3. **Validate links**: `bun run build`, which runs the link checker automatically
-4. **Check both themes**: if your change touches UI, verify it in both light and dark mode
-5. **Check mobile**: resize to below 1024 px and confirm the mobile drawer and search bar still work
+- [ ] **Run the linter and type check**: `bun run check`
+- [ ] **Run the tests**: `bun run test`, or `bun run test:coverage` for a coverage report
+- [ ] **Validate links**: `bun run build` runs the link checker automatically
+- [ ] **Check both themes**: if your change touches the UI, verify it in both light and dark mode
+- [ ] **Check mobile**: resize below 1024 px and confirm the mobile drawer and search bar still work
 
 # Adding a Lucide icon
 
-Icons available in the `icon` frontmatter field come from `src/components/NavIcon.tsx`. To add one:
+Icons available in the `icon` page setting come from `src/components/NavIcon.tsx`. To add one:
 
 1. Import it from `lucide-react`
 2. Add it to the `icons` map in the same file

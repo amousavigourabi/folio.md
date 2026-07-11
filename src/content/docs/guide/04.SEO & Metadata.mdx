@@ -1,45 +1,70 @@
 ---
 title: SEO & Metadata
-description: Page metadata, Open Graph images, sitemap, and structured data.
+description: What folio.md does for SEO automatically, and how to customize page metadata, social sharing images, sitemap, feeds, and structured data.
+keywords: [SEO, Open Graph, sitemap, Atom feed, structured data, robots.txt, metadata]
 ---
 
-# Page metadata
+folio.md handles the SEO essentials for every page at build time. You don't need to configure anything for basic SEO to work.
 
-The layout injects the following `<head>` tags automatically from frontmatter and `folio.config.ts`:
+# What folio.md does for you
 
-- `<title>`: `{page title} | {site name}`
-- `<meta name="description">`: page `description` or site-level fallback
-- `<meta name="author">`: from the page `author` frontmatter field when set
-- Open Graph tags: `og:title`, `og:description`, `og:image`, `og:url`, `og:locale`
-- Twitter / X card tags
-- `<link rel="canonical">` derived from `siteUrl` in `folio.config.ts`
-- `<meta name="robots">` set to `noindex, nofollow` when `noIndex: true` in frontmatter
-- `<meta name="theme-color">` derived from the active theme gradient
+For every page, folio.md automatically generates:
+
+- **Browser tab title**: formatted as `{page title} | {site name}`
+- **Search engine description**: from your page `description`, or the site-level fallback from `folio.config.ts`
+- **Canonical URL**: built from `siteUrl` in `folio.config.ts`; omitted for pages marked `noIndex: true`
+- **Social sharing cards**: Open Graph and Twitter card tags so links preview correctly on social platforms
+- **Social sharing image**: a generated image for every page; see [Open Graph images](#open-graph-images)
+- **Structured data**: JSON-LD to help search engines understand your content; see [Structured data](#structured-data)
+- **Sitemap**: `/sitemap.xml` listing all public pages; see [Sitemap](#sitemap)
+- **Atom feed**: `/feed.xml` listing all public pages; see [Atom feed](#atom-feed)
+- **Robots file**: `/robots.txt` controlling crawler access; see [Robots.txt](#robotstxt)
+- **Author credit**: included in metadata when you add `author:` to a page
+- **Mobile theme color**: derived from your configured theme gradient
+
+# Customizing SEO per page
+
+Control metadata on individual pages through page settings:
+
+| What you want | What to set |
+|---|---|
+| Description in search snippets | `description:` on the page |
+| Author credit | `author:` on the page |
+| Extra search keywords | `keywords:` on the page |
+| Hide from search engines and the sitemap | `noIndex: true` on the page |
+
+See [Page Settings](/reference/frontmatter) for the full list of per-page options.
+
+To change SEO settings across the whole site, use `folio.config.ts`. See [Configuration](/guide/configuration) for details.
 
 # Open Graph images
 
-folio.md automatically generates a `/og/{slug}.png` image for every page at build time using [Satori](https://github.com/vercel/satori) and [Sharp](https://sharp.pixelplumbing.com). The image includes the page title, description, and site name, styled with the configured gradient colors. No extra configuration required.
+folio.md generates a social sharing image for every page at build time using [Satori](https://github.com/vercel/satori) and [Sharp](https://sharp.pixelplumbing.com). Each image is 1200×630 px and includes the page title, description, and site name, styled with your configured gradient colors.
 
-folio.md uses the auto-generated image for `og:image` and `twitter:image`. No configuration required.
+These images appear automatically when someone shares a link to your site on social platforms. You don't need any extra configuration.
 
 # Sitemap
 
-folio.md generates a `/sitemap.xml` at build time. It includes every page that doesn't have `noIndex: true` in its frontmatter, with a `<lastmod>` date from git history where available.
+folio.md generates `/sitemap.xml` at build time, listing every page that doesn't have `noIndex: true`. Each entry includes a `lastmod` date from git history where available.
 
-folio.md also injects a `<link rel="sitemap">` tag into every page's `<head>` automatically.
+folio.md links to the sitemap from every page so search engines can discover it automatically.
 
 # Atom feed
 
-folio.md generates an Atom 1.0 feed at `/feed.xml` at build time. It includes every page that doesn't have `noIndex: true`, sorted by most recently modified. Each entry includes the page title, description, canonical URL, and `published` and `updated` dates from git history where available.
+folio.md generates `/feed.xml` at build time, listing every page without `noIndex: true`, sorted by most recently modified. Each entry includes the page title, description, canonical URL, and dates from git history.
 
-folio.md also injects a `<link rel="alternate">` tag into every page's `<head>` so feed readers can discover the feed automatically.
+folio.md links to the feed from every page so feed readers can discover it automatically.
+
+# Robots.txt
+
+folio.md generates `/robots.txt` at build time. By default, it allows all crawlers to index all pages. To change this, set `seo.robots` in `folio.config.ts`. See [Configuration](/guide/configuration#search-engine-optimization) for details.
 
 # Structured data
 
-folio.md injects JSON-LD structured data into every page's `<head>`:
+folio.md injects JSON-LD structured data into every page:
 
 - **WebSite**: site name and URL on every page
-- **Article**: title, description, author, publish date, and last-modified date on non-index pages that don't have `noIndex: true`
-- **BreadcrumbList**: sidebar path to the current page
+- **Article**: title, description, author, and dates on every non-`noIndex` page
+- **BreadcrumbList**: the sidebar path to the current page, on pages nested at least two levels deep
 
-folio.md generates this automatically from frontmatter and `folio.config.ts`. No configuration required.
+folio.md generates this automatically from your page settings and `folio.config.ts`. No configuration needed.

@@ -23,7 +23,15 @@ npm run build    # npm
 yarn build       # yarn
 ```
 
-The build fails if any internal link in your MDX files points to a page that doesn't exist. Fix any broken links before deploying.
+The link validator runs automatically before every build. When you install folio.md as a dependency, it runs through `folio:build`. When you work in the repository directly, it runs through `bun run build`. It fails the build at exit code 1 on broken internal links and dead anchor fragments. Dead external URLs emit a warning but don't fail the build.
+
+If you cloned the folio.md repository directly, you can also run the link validator without a full build:
+
+```bash
+bun run validate-links
+```
+
+When you install folio.md as a dependency, this standalone command isn't available. Link validation runs only as part of `folio:build`.
 
 # Deploying to GitHub pages
 

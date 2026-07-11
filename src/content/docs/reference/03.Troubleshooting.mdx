@@ -21,7 +21,7 @@ The link checker runs automatically as part of `bun run folio:build`, `npm run f
 
 **Symptom:** the link validator prints `ALIAS [internal] /old-path → /new-path`.
 
-A page with `alias:` in its frontmatter is a redirect stub. folio.md never renders it as a real page. Linking to an alias page instead of its destination is an antipattern. Update those links to point to the destination directly.
+A page with `alias:` in its page settings is a redirect page. folio.md never renders it as a real page. Linking to a redirect page instead of its destination is an antipattern. Update those links to point to the destination directly.
 
 ---
 
@@ -90,12 +90,14 @@ The `public/` directory must sit next to `folio.config.ts` at your repository ro
 Set `lang` and `seo.locale` in `folio.config.ts` to match your target locale:
 
 
-```ts
-export default {
+```ts title="folio.config.ts"
+import { defineFolioConfig } from "folio-md/types";
+
+export default defineFolioConfig({
   lang: "fr",
   seo: { locale: "fr_FR" },
   // …
-};
+});
 ```
 
 `lang` sets the `<html lang>` attribute. folio.md passes `seo.locale` to `toLocaleDateString` for the "Last updated" date and to the `og:locale` meta tag.
