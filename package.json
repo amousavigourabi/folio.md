@@ -28,7 +28,8 @@
     "lint:fix": "biome check --write src scripts folio.config.ts",
     "check": "bun run lint && tsc",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "postinstall": "lefthook install"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",
