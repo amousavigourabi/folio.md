@@ -1,5 +1,10 @@
 # folio.md
 
+[![CI](https://github.com/amousavigourabi/folio.md/actions/workflows/ci.yml/badge.svg)](https://github.com/amousavigourabi/folio.md/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-FF5D01?logo=astro&logoColor=white)](https://astro.build)
+[![Powered by Bun](https://img.shields.io/badge/Powered%20by-Bun-fbf0df?logo=bun&logoColor=black)](https://bun.sh)
+
 A zero-config documentation site builder powered by Astro, MDX, and Tailwind CSS. Add it as a dependency to your project, point it at your docs folder, and ship. No managed platform, no per-seat pricing, no lock-in.
 
 **Docs:** https://foliopages.dev | **Repository:** https://github.com/amousavigourabi/folio.md | **Default branch:** `master`
@@ -60,17 +65,16 @@ Open [http://localhost:4321](http://localhost:4321) to view the site.
 
 ## Content
 
-Docs live in `src/content/docs/` as `.mdx` files. Each file's frontmatter controls its title, nav icon, and sidebar order:
+Docs live in `src/content/docs/` as `.mdx` files. Each file's frontmatter controls its title and nav icon:
 
 ```mdx
 ---
 title: My Page
 icon: House
-order: 1
 ---
 ```
 
-Available icons are defined in `src/components/NavIcon.tsx`.
+Sidebar order is determined by numeric filename prefixes (e.g. `01.Introduction.mdx`, `02.Setup.mdx`). Available icons are defined in `src/components/NavIcon.tsx`.
 
 ## Project Structure
 
