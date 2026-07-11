@@ -26,6 +26,7 @@
     "prose": "bun scripts/prose.ts",
     "lint": "biome check src scripts folio.config.ts",
     "lint:fix": "biome check --write src scripts folio.config.ts",
+    "check": "bun run lint && tsc",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"
   },
